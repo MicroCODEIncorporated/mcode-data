@@ -242,6 +242,9 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.3.0
+    * Updated to use mcode-log() v3.0.0.
+    * Removed JEST from the NPM package, only needed for testing, instructions to install are included.
 * 0.2.6
     * Upgrade 'mcode-log' to v0.2.6
 * 0.2.5
