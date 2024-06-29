@@ -1,18 +1,18 @@
 // #region  F I L E
-// <copyright file="mcode-list/index.js" company="MicroCODE Incorporated">Copyright © 2022-2024 MicroCODE, Inc. Troy, MI</copyright><author>Timothy J. McGuire</author>
+// <copyright file="mcode-data/index.js" company="MicroCODE Incorporated">Copyright © 2022-2024 MicroCODE, Inc. Troy, MI</copyright><author>Timothy J. McGuire</author>
 // #region  M O D U L E
 
 // #region  D O C U M E N T A T I O N
 /*
- *      Title:    MicroCODE Shared Function Library
- *      Module:   modules (node_modules/mcode-list/index.js)
+ *      Title:    MicroCODE Shared Data Handling Library
+ *      Module:   modules (node_modules/mcode-data/index.js)
  *      Project:  MicroCODE MERN Applications
  *      Customer: Internal+MIT xPRO Course
  *      Creator:  MicroCODE Incorporated
  *      Date:     January 2022-2024
  *      Author:   Timothy McGuire
  *
- *      MIT License: MicroCODE.mcode-list
+ *      MIT License: MicroCODE.mcode-data
  *
  *      Copyright (c) 2022-2024 Timothy McGuire, MicroCODE, Inc.
  *
@@ -38,7 +38,7 @@
  *      DESCRIPTION:
  *      ------------
  *
- *      This module implements the MicroCODE's Common JavaScript functions for list processing.
+ *      This module implements the MicroCODE's Common JavaScript functions for data handling.
  *
  *
  *      REFERENCES:
@@ -56,7 +56,7 @@
  *
  *  Date:         By-Group:   Rev:    Description:
  *
- *  30-Jan-2024   TJM-MCODE  {0001}   New module for common reusable JavaScript list processing functions.
+ *  30-Jan-2024   TJM-MCODE  {0001}   New module for common reusable JavaScript data handling functions.
  *  01-Feb-2024   TJM-MCODE  {0002}   Changed to the Universal Module Definition (UMD) pattern to support AMD,
  *                                    CommonJS/Node.js, and browser global in our exported module.
  *  01-Feb-2024   TJM-MCODE  {0003}   Swap() and Call() now throw an error if the 'keys' and 'values' lists are not the same length,
@@ -91,7 +91,7 @@ const packageJson = require('./package.json');
 // #region  C O N S T A N T S, F U N C T I O N S – P U B L I C
 
 // MicroCODE: define this module's name for our 'mcode-log' package
-const moduleName = 'mcode-list.js';
+const MODULE_NAME = 'mcode-data.js';
 
 // define local copy of 'getEnvVar()' for use before 'mcode' is loaded
 // this same function is available in 'mcode-env.js' but we need it here without that package
@@ -118,144 +118,399 @@ const theme = getEnvVar('THEME', 'dark'); // default to dark mode
 const mode = getEnvVar('NODE_ENV', 'development'); // default to development mode
 
 /**
- * @func getIndex
- * @memberof mcode
- * @desc a private helper function that returns the index of a 'key' in a 'keys' list
- * or the last/default index in the 'keys' list if not found.
- * @param {any} key a JavaScript value viewed as a 'key' in the 'keys' list.
- * @param {any[]} keys a JavaScript array of values viewed as 'keys' list.
- * @returns {number} the index of the 'key' in the 'keys' list or the last/default index in the list if not found
- */
-function getIndex(key, keys)
-{
-    let index = keys.indexOf(key);
-    return (index === -1) ? (keys.length - 1) : index;
-}
-
-/**
  * @namespace mcode
  * @desc mcode namespace containing functions and constants.
  */
 const mcode = {
 
     /**
-     * @func ready
+     * @func octify
      * @memberof mcode
-     * @desc Logs a message to the Console when the module is loaded to show version.
+     * @desc Converts a string to an octal string.
+     * @api public
+     * @param {string} text - The string to be converted to an octal string of bytes.
+     * @returns {string} The octal string.
+     * @example
+     *           mcode.octify('Hello, World!');  // returns: "110 145 154 154 157 54 40 127 157 162 154 144 41"
      */
-    ready: function ()
+    octify(text)
     {
-        log.success(`MicroCODE ${moduleName} v${packageJson.version} is loaded, mode: ${mode}, theme: ${theme}.`, moduleName);
+        const buffer = Buffer.from(text, 'utf8');
+
+        // Convert each byte to its octal representation
+        const octArray = [...buffer].map((byte) => byte.toString(8).padStart(3, '0'));
+
+        // Join the octal values into a string separated by spaces
+        return octArray.join(' ');
     },
 
     /**
-     * @func swap
+     * @func hexify
      * @memberof mcode
-     * @desc Swaps a 'key' from a 'keys' list with a 'value' in a 'values' list.
+     * @desc Converts a string to a hexadecinal string of bytes.
      * @api public
-     * @param {any} key a JavaScript value viewed as a 'key' in the 'keys' list.
-     * @param {any[]} keys a JavaScript array of values viewed as a 'keys' list.
-     * @param {any[]} values a JavaScript array of values viewed as the 'values' list.
-     * @returns {any} the value from the 'values' list corresponding to the 'key' in the 'keys' list.
-     *
+     * @param {string} text the string to be converted to a hex string.
+     * @returns {string} the hex string.
      * @example
-     *     let list1 = [1, 2, 3, 4, 5, 0];
-     *     let list2 = ['one', 'two', 'three', 'four', 'five', 'default'];
-     *     let list3 = [false, true, false, true, false, false];
-     *     let list4 = [{ key: 1, property: ONE },
-     *                  { key: 2, property: TWO },
-     *                  { key: 3, property: THREE },
-     *                  { key: 4, property: FOUR },
-     *                  { key: 5, property: FIVE },
-     *                  { key: 0, property: DEFAULT }];
-     *
-     *     let key = null;
-     *     let value = null;
-     *
-     *  1) straight swap of two values...
-     *
-     *     key = 3;
-     *     value = mcode.swap(key, list1, list2);  // value = 'three'
-     *
-     *     key = 6;
-     *     value = mcode.swap(key, list1, list2);  // value = 'default'
-     *
-     *     key = 0;
-     *     value = mcode.swap(key, list1, list2);  // value = 'default'
-     *
-     *  2) the same lists can be used the other way around...
-     *
-     *     key = 'three';
-     *     value = mcode.swap(key, list2, list1);  // value = 3
-     *
-     *     key = 'six';
-     *     value = mcode.swap(key, list2, list1);  // value = 0
-     *
-     *  3) any two lists on the same subject (i.e.: the same length) can be used...
-     *
-     *    key = 3;
-     *    value = mcode.swap(key, list1, list3);  // value = false
-     *
-     *    key = 'three';
-     *    value = mcode.swap(key, list2, list4);  // value = { key: 4, property: FOUR }
-     *
-     *
-     *   ...seems simple enough, but keep in mind that the 'key' and 'value' in the lists can be any JavaScript value, including:
-     *
-     *   - a number
-     *   - a string
-     *   - a boolean
-     *   - an object
-     *   - a function
-     *   - a class
-     *   - a module
-     *   - a BigInt
-     *   - a Promise
-     *   - an Array
-     *   - a JSON object
-     *   - null
-     *   - undefined
-     *     etc.
-     *
+     *           mcode.hexify('Hello, World!');  // returns: "48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21"
      */
-    swap: function (key, keys, values)
+    hexify(text)
     {
-        // ensure the 'keys' and 'values' lists are the same length
-        if (keys.length !== values.length)
-        {
-            throw new Error(`mcode-list.swap(): The 'keys' and 'values' lists are not the same length, keys.length:${keys.length} !== values.length:${values.length}`);
-        }
+        const buffer = Buffer.from(text, 'utf8');
+        const hex = buffer.toString('hex');
 
-        // return the value from the 'values' list corresponding to the 'key' in the 'keys' list, or default value
-        return values[getIndex(key, keys)];
+        // Format the hex string into groups of 2 characters (1 byte)
+        return hex.match(/.{1,2}/g).join(' ');
     },
 
     /**
-     * @func call
+     * @func extractId
      * @memberof mcode
-     * @desc Calls a function from a 'functions' list using a 'key' index found in a 'keys' list.
-     * @api public
-     * @param {any} key a JavaScript value viewed as a 'key' in the 'keys' list.
-     * @param {any[]} keys a JavaScript array of values viewed as 'keys' list.
-     * @param {any[]} functions a JavaScript array of values viewed as 'values' list.
-     * @returns {any} the return value from the function called in 'functions' list corresponding to the 'key' in the 'keys' list.
+     * @desc Extracts an alpha-numberic ID Field from a string, intended to be a unique portion of a common string.
+     * @param {string} objectName typically a file name, but can be any string, to extract an ID Field from.
+     * @returns {string} the extracted ID Field.
+     *
+     *  Rules for extracting the ID Field:
+     *  ----------------------------------
+     *  1. The ID Field is assumed to be the first alpha-numeric field in the string.
+     *  2. The ID Field is assumed to be Letters + Numbers, with no spaces or special characters.
+     *  3. The ID Field is assumed to be either at the beginning or end of the string, or separated by non-alpha-numeric characters.
+     *  4. The ID Field cound have lowercase 'placeholders' for numbers, like 'PxCy' or 'PnCn' for 'P1C2'.
      *
      * @example
-     *      let keys = [1, 2, 3, 4, 5, null];
-     *      let functions = [function1, function2, function3, function4, function5, default];
-     *      let key = 3;
-     *      let value = mcode.call(key, keys, functions);  // value = (return value of function3)
+     *
+     * const str1 = "CG_BRKE01_20231116.L5K";
+     * const str2 = "CG_BRKE03_20231116.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "BRKE01"
+     * console.log(extractIdField(str2)); // Expected output: "BRKE03"
+     *
+     * const str1 = "EP_GPT13TZ1_20231115_0800.L5K";
+     * const str2 = "EP_GPT13TZ2_20231113_1600.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "GPT13TZ1"
+     * console.log(extractIdField(str2)); // Expected output: "GPT13TZ2"
+     *
+     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
+     * const str2 = "SEP_P3C0_GMP_ARL.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "P1C2"
+     * console.log(extractIdField(str2)); // Expected output: "P3C0"
+     *
+     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
+     * const str2 = "SEP_PxCy_GMP.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "P1C2"
+     * console.log(extractIdField(str2)); // Expected output: "PxCy"
+     *
+     *
      */
-    call: function (key, keys, functions)
+    extractId: function (objectName)
     {
-        // ensure the source and destination lists are the same length
-        if (keys.length !== functions.length)
+        let idField = '';
+        let inAlphaNumeric = false;
+        let isLetter = false;
+        let isLowerL = false;
+        let isNumber = false;
+        let hasLetters = false;
+        let hasNumbers = false;
+        let si = 0;
+
+        // ƒ to check for upper case letter
+        const isUpper = (objectName, i) =>
         {
-            throw new Error(`mcode-list.call(): The 'keys' and 'functions' lists are not the same length, keys.length:${keys.length} !== functions.length:${functions.length}`);
+            // if 'i' is outside 'objectName' return false
+            if (i < 0 || i >= objectName.length)
+            {
+                return false;
+            }
+            return (objectName[i] >= 'A' && objectName[i] <= 'Z');
+        };
+
+        // scan the string for the first alpha-numeric field
+        for (let i = 0; i < objectName.length; i++)
+        {
+            isNumber = (objectName[i] >= '0' && objectName[i] <= '9');
+            isLetter = (objectName[i] >= 'A' && objectName[i] <= 'Z');
+            isLowerL = (objectName[i] >= 'a' && objectName[i] <= 'z');
+
+            if (isNumber || isLetter || isLowerL)
+            {
+                if (!inAlphaNumeric)
+                {
+                    inAlphaNumeric = true;
+                    si = i;
+                }
+                idField += objectName[i];
+                hasLetters = hasLetters || isLetter || isLowerL;
+                hasNumbers = hasNumbers || isNumber;
+
+                // Check for 'lower case numeric placeholder' like 'PxCy' or 'PnCn' for 'P1C2'
+                if (isUpper(objectName, i - 1) && isUpper(objectName, i + 1) && isLowerL)
+                {
+                    hasNumbers = true;  // treat the single lower case letter between upper case letters as a number placeholder
+                }
+            }
+            else
+            {
+                // hit non Alpha-Numeric character
+                if (inAlphaNumeric && hasLetters && hasNumbers)
+                {
+                    idField = objectName.substring(si, i);
+                    break;  // we have the field we want, exit to return it
+                }
+                else
+                {
+                    // current field does not meet criteria, reset and continue
+                    si = 0;
+                    idField = '';
+                    inAlphaNumeric = false;
+                    hasLetters = false;
+                    hasNumbers = false;
+                }
+            }
         }
 
-        // return the value of the function called from the 'functions' list corresponding to the 'key' in the 'keys' list, or the value returned by the default function
-        return functions[getIndex(key, keys)]();
+        return idField || '';
+    },
+
+    /**
+     * @func isString
+     * @memberof mcode
+     * @desc Checks whether or not a object is a JS String.
+     * @api public
+     * @param {object} jsObject JavaScript object to be tested
+     * @returns {boolean} a value indicating whether or not the object is a STRING.
+     */
+    isString: function (jsObject)
+    {
+        return Object.prototype.toString.call(jsObject) === '[object String]';
+    },
+
+    /**
+     * @method isObject
+     * @memberof mcode
+     * @desc Checks whether or not a object is a JS Object.
+     * @api public
+     * @param {object} jsObject JavaScript object to be tested
+     * @returns {boolean} a value indicating whether or not the object is an OBJECT.
+     */
+    isObject: function (jsObject)
+    {
+        if (mcode.isString(jsObject)) return false;
+
+        return typeof jsObject === 'object' && jsObject !== null && !Array.isArray(jsObject) && typeof jsObject !== 'function';
+    },
+
+    /**
+     * @method isArray
+     * @memberof mcode
+     * @desc Checks whether or not an object is a JS Array.
+     * @api public
+     * @param {object} jsObject JavaScript object to be tested
+     * @returns {boolean} a value indicating whether or not the object is an ARRAY.
+     */
+    isArray: function (jsObject)
+    {
+        return Array.isArray(jsObject);
+    },
+
+    /**
+     * @method isFunction
+     * @memberof mcode
+     * @desc Checks whether or not an object is a JS Function.
+     * @api public
+     * @param {object} jsObject JavaScript object to be tested
+     * @returns {boolean} a value indicating whether or not the object is a FUNCTION.
+     */
+    isFunction: function (jsObject)
+    {
+        if (mcode.isString(jsObject)) return false;
+
+        return typeof jsObject === 'function';
+    },
+
+    /**
+     * @func isNumber
+     * @memberof mcode
+     * @desc Checks whether or not an object is a JS Number and *not* NaN.
+     * @api public
+     * @param {any} numberToCheck as a number of some type
+     * @returns {boolean} a value indicating whether or not the object is valid Number.
+     */
+    isNumber: function (numberToCheck)
+    {
+        // NOTE: this compare will fail for NaN
+        // eslint-disable-next-line no-self-compare
+        return (typeof numberToCheck === 'number') && (numberToCheck === numberToCheck);
+    },
+
+    /**
+     * @func isNaN
+     * @memberof mcode
+     * @desc Checks whether or not an object is a double-precision 'Not-a-Number (Nan)'.
+     * @api public
+     * @param {any} numberToCheck as a number of some type
+     * @returns {boolean} a value indicating whether or not the object is NaN.
+     */
+    isNaN: function (numberToCheck)
+    {
+        // NOTE: this compare will always be true for NaN, and only for NaN
+        // eslint-disable-next-line no-self-compare
+        return (numberToCheck !== numberToCheck);
+    },
+
+    /**
+     * @func isJson
+     * @memberof mcode
+     * @desc Checks a string for embedded JSON data.
+     * @api public
+     * @param {object} object string to be tested
+     * @returns {boolean} a value indicating whether or not the object is a JSON string.
+     */
+    isJson: function (object)
+    {
+        try
+        {
+            if (typeof object !== 'string')
+            {
+                return false;
+            }
+
+            if ((object).includes('{'))
+            {
+                return true;  // treat as JSON -- JSON.parse() is overkill here
+            }
+            else
+            {
+                return false; // *not* JSON
+            }
+        }
+        catch
+        {
+            return false;  // *not* JSON and not parsable
+        }
+    },
+
+    /**
+     * @func isUndefined
+     * @memberof mcode
+     * @desc Checks whether or not an object is a 'undefined'.
+     * @api public
+     * @param {any} objectToCheck as a variable of some type
+     * @returns {boolean} a value indicating whether or not the object is UNDEFINED.
+     */
+    isUndefined: function (objectToCheck)
+    {
+        // return true if 'objectToCheck' is UNDEFINED
+        return ((typeof objectToCheck === 'undefined') || (objectToCheck === null));
+    },
+
+    /**
+     * @func isDate
+     * @memberof mcode
+     * @desc Checks whether or not an object is a JS Date.
+     * @param {object} objectToCheck
+     * @returns {boolean} a value indicating whether or not the object is a DATE.
+     */
+    isDate: function (objectToCheck)
+    {
+        // return true if 'objectToCheck' is DATE Value
+        return (objectToCheck instanceof Date);
+    },
+
+    /**
+     * @func isTimeStamp
+     * @memberof mcode
+     * @desc Checks whether or not an object is a Timestampe, i.e.: a JS Date.
+     * @param {object} objectToCheck
+     * @returns {boolean} a value indicating whether or not the object is a TIMESTAMP.
+     */
+    isTimeStamp: function (objectToCheck)
+    {
+        // return true if 'objectToCheck' is DATE/TIMESTAMP Value
+        return (objectToCheck instanceof Date);
+    },
+
+    /**
+     * @func httpStatus
+     * @memberof mcode
+     * @desc Returns the text for a given HTTP status code.
+     * @param {object} httpCode the HTTP status code to translate.
+     * @returns {string} a value representing the English meaning of a HTTP status code.
+     */
+    httpStatus: function (httpCode)
+    {
+        const httpResponse =
+        {
+            "100": "Continue",
+            "101": "Switching Protocols",
+            "102": "Processing",
+            "103": "Early Hints",
+            "200": "OK",
+            "201": "Created",
+            "202": "Accepted",
+            "203": "Non-Authoritative Information",
+            "204": "No Content",
+            "205": "Reset Content",
+            "206": "Partial Content",
+            "207": "Multi-Status",
+            "208": "Already Reported",
+            "226": "IM Used",
+            "300": "Multiple Choices",
+            "301": "Moved Permanently",
+            "302": "Found",
+            "303": "See Other",
+            "304": "Not Modified",
+            "305": "Use Proxy",
+            "307": "Temporary Redirect",
+            "308": "Permanent Redirect",
+            "400": "Bad Request",
+            "401": "Unauthorized",
+            "402": "Payment Required",
+            "403": "Forbidden",
+            "404": "Not Found",
+            "405": "Method Not Allowed",
+            "406": "Not Acceptable",
+            "407": "Proxy Authentication Required",
+            "408": "Request Timeout",
+            "409": "Conflict",
+            "410": "Gone",
+            "411": "Length Required",
+            "412": "Precondition Failed",
+            "413": "Payload Too Large",
+            "414": "URI Too Long",
+            "415": "Unsupported Media Type",
+            "416": "Range Not Satisfiable",
+            "417": "Expectation Failed",
+            "418": "I'm a Teapot", // indicates that the server refuses to brew coffee because it is a teapot. (An April fool’s joke from 1998)
+            "421": "Misdirected Request",
+            "422": "Unprocessable Entity",
+            "423": "Locked",
+            "424": "Failed Dependency",
+            "425": "Too Early",
+            "426": "Upgrade Required",
+            "428": "Precondition Required",
+            "429": "Too Many Requests",
+            "431": "Request Header Fields Too Large",
+            "444": "Connection Closed Without Response",
+            "451": "Unavailable For Legal Reasons",
+            "500": "Internal Server Error",
+            "501": "Not Implemented",
+            "502": "Bad Gateway",
+            "503": "Service Unavailable",
+            "504": "Gateway Timeout",
+            "505": "HTTP Version Not Supported",
+            "506": "Variant Also Negotiates",
+            "507": "Insufficient Storage",
+            "508": "Loop Detected",
+            "509": "Bandwidth Limit Exceeded",
+            "510": "Not Extended",
+            "511": "Network Authentication Required"
+        };
+
+        // return the translated HTTP status code
+        return ('' + httpCode + ': ' + httpResponse[httpCode] || 'Unknown HTTP Status');
     },
 };
 

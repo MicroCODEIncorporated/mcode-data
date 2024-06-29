@@ -1,34 +1,30 @@
 {
-  "name": "mcode-list",
-  "version": "0.3.0",
-  "description": "Our List Processing functions. These support list of Objects--ints, string, JSON, any--that are ordered and related to other lists on the same topic. These can be used to swap one item in a list with its corresponding element in a realted list. This is similar to Dictionaries but the key:value pairing is dynamic and reverisble and not limited to two values.",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MicroCODEIncorporated/mcode-list.git"
-  },
-  "keywords": [
-    "Lists",
-    "Lisp",
-    "Dictionary",
-    "Json",
-    "Ordered",
-    "Calls",
-    "Extensible",
-    "Code",
-    "Builder",
-    "MicroCODE"
-  ],
-  "author": "Timothy McGuire",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/MicroCODEIncorporated/mcode-list/issues"
-  },
-  "homepage": "https://github.com/MicroCODEIncorporated/mcode-list#readme",
-  "dependencies": {
-    "mcode-log": "^0.3.0"
-  }
+    "name": "mcode-data",
+    "version": "0.0.0",
+    "description": "Our Data Handling functions. These support type checking and type coercion and conversion of Objects--ints, string, number, JSON, any--to commonize data handling and type checking.",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MicroCODEIncorporated/mcode-data.git"
+    },
+    "keywords": [
+        "Data",
+        "Types",
+        "Coercion",
+        "Code",
+        "Builder",
+        "MicroCODE"
+    ],
+    "author": "Timothy McGuire",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/MicroCODEIncorporated/mcode-data/issues"
+    },
+    "homepage": "https://github.com/MicroCODEIncorporated/mcode-data#readme",
+    "dependencies": {
+        "mcode-log": "^0.4.0"
+    }
 }
