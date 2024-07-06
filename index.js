@@ -75,7 +75,6 @@
 
 // #region  I M P O R T S
 
-const log = require('mcode-log');
 const packageJson = require('./package.json');
 
 // #endregion
@@ -122,157 +121,6 @@ const mode = getEnvVar('NODE_ENV', 'development'); // default to development mod
  * @desc mcode namespace containing functions and constants.
  */
 const mcode = {
-
-    /**
-     * @func octify
-     * @memberof mcode
-     * @desc Converts a string to an octal string.
-     * @api public
-     * @param {string} text - The string to be converted to an octal string of bytes.
-     * @returns {string} The octal string.
-     * @example
-     *           mcode.octify('Hello, World!');  // returns: "110 145 154 154 157 54 40 127 157 162 154 144 41"
-     */
-    octify(text)
-    {
-        const buffer = Buffer.from(text, 'utf8');
-
-        // Convert each byte to its octal representation
-        const octArray = [...buffer].map((byte) => byte.toString(8).padStart(3, '0'));
-
-        // Join the octal values into a string separated by spaces
-        return octArray.join(' ');
-    },
-
-    /**
-     * @func hexify
-     * @memberof mcode
-     * @desc Converts a string to a hexadecinal string of bytes.
-     * @api public
-     * @param {string} text the string to be converted to a hex string.
-     * @returns {string} the hex string.
-     * @example
-     *           mcode.hexify('Hello, World!');  // returns: "48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21"
-     */
-    hexify(text)
-    {
-        const buffer = Buffer.from(text, 'utf8');
-        const hex = buffer.toString('hex');
-
-        // Format the hex string into groups of 2 characters (1 byte)
-        return hex.match(/.{1,2}/g).join(' ');
-    },
-
-    /**
-     * @func extractId
-     * @memberof mcode
-     * @desc Extracts an alpha-numberic ID Field from a string, intended to be a unique portion of a common string.
-     * @param {string} objectName typically a file name, but can be any string, to extract an ID Field from.
-     * @returns {string} the extracted ID Field.
-     *
-     *  Rules for extracting the ID Field:
-     *  ----------------------------------
-     *  1. The ID Field is assumed to be the first alpha-numeric field in the string.
-     *  2. The ID Field is assumed to be Letters + Numbers, with no spaces or special characters.
-     *  3. The ID Field is assumed to be either at the beginning or end of the string, or separated by non-alpha-numeric characters.
-     *  4. The ID Field cound have lowercase 'placeholders' for numbers, like 'PxCy' or 'PnCn' for 'P1C2'.
-     *
-     * @example
-     *
-     * const str1 = "CG_BRKE01_20231116.L5K";
-     * const str2 = "CG_BRKE03_20231116.L5K";
-     *
-     * console.log(extractIdField(str1)); // Expected output: "BRKE01"
-     * console.log(extractIdField(str2)); // Expected output: "BRKE03"
-     *
-     * const str1 = "EP_GPT13TZ1_20231115_0800.L5K";
-     * const str2 = "EP_GPT13TZ2_20231113_1600.L5K";
-     *
-     * console.log(extractIdField(str1)); // Expected output: "GPT13TZ1"
-     * console.log(extractIdField(str2)); // Expected output: "GPT13TZ2"
-     *
-     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
-     * const str2 = "SEP_P3C0_GMP_ARL.L5K";
-     *
-     * console.log(extractIdField(str1)); // Expected output: "P1C2"
-     * console.log(extractIdField(str2)); // Expected output: "P3C0"
-     *
-     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
-     * const str2 = "SEP_PxCy_GMP.L5K";
-     *
-     * console.log(extractIdField(str1)); // Expected output: "P1C2"
-     * console.log(extractIdField(str2)); // Expected output: "PxCy"
-     *
-     *
-     */
-    extractId: function (objectName)
-    {
-        let idField = '';
-        let inAlphaNumeric = false;
-        let isLetter = false;
-        let isLowerL = false;
-        let isNumber = false;
-        let hasLetters = false;
-        let hasNumbers = false;
-        let si = 0;
-
-        // ƒ to check for upper case letter
-        const isUpper = (objectName, i) =>
-        {
-            // if 'i' is outside 'objectName' return false
-            if (i < 0 || i >= objectName.length)
-            {
-                return false;
-            }
-            return (objectName[i] >= 'A' && objectName[i] <= 'Z');
-        };
-
-        // scan the string for the first alpha-numeric field
-        for (let i = 0; i < objectName.length; i++)
-        {
-            isNumber = (objectName[i] >= '0' && objectName[i] <= '9');
-            isLetter = (objectName[i] >= 'A' && objectName[i] <= 'Z');
-            isLowerL = (objectName[i] >= 'a' && objectName[i] <= 'z');
-
-            if (isNumber || isLetter || isLowerL)
-            {
-                if (!inAlphaNumeric)
-                {
-                    inAlphaNumeric = true;
-                    si = i;
-                }
-                idField += objectName[i];
-                hasLetters = hasLetters || isLetter || isLowerL;
-                hasNumbers = hasNumbers || isNumber;
-
-                // Check for 'lower case numeric placeholder' like 'PxCy' or 'PnCn' for 'P1C2'
-                if (isUpper(objectName, i - 1) && isUpper(objectName, i + 1) && isLowerL)
-                {
-                    hasNumbers = true;  // treat the single lower case letter between upper case letters as a number placeholder
-                }
-            }
-            else
-            {
-                // hit non Alpha-Numeric character
-                if (inAlphaNumeric && hasLetters && hasNumbers)
-                {
-                    idField = objectName.substring(si, i);
-                    break;  // we have the field we want, exit to return it
-                }
-                else
-                {
-                    // current field does not meet criteria, reset and continue
-                    si = 0;
-                    idField = '';
-                    inAlphaNumeric = false;
-                    hasLetters = false;
-                    hasNumbers = false;
-                }
-            }
-        }
-
-        return idField || '';
-    },
 
     /**
      * @func isString
@@ -430,6 +278,157 @@ const mcode = {
     {
         // return true if 'objectToCheck' is DATE/TIMESTAMP Value
         return (objectToCheck instanceof Date);
+    },
+
+    /**
+     * @func octify
+     * @memberof mcode
+     * @desc Converts a string to an octal string.
+     * @api public
+     * @param {string} text - The string to be converted to an octal string of bytes.
+     * @returns {string} The octal string.
+     * @example
+     *           mcode.octify('Hello, World!');  // returns: "110 145 154 154 157 54 40 127 157 162 154 144 41"
+     */
+    octify(text)
+    {
+        const buffer = Buffer.from(text, 'utf8');
+
+        // Convert each byte to its octal representation
+        const octArray = [...buffer].map((byte) => byte.toString(8).padStart(3, '0'));
+
+        // Join the octal values into a string separated by spaces
+        return octArray.join(' ');
+    },
+
+    /**
+     * @func hexify
+     * @memberof mcode
+     * @desc Converts a string to a hexadecinal string of bytes.
+     * @api public
+     * @param {string} text the string to be converted to a hex string.
+     * @returns {string} the hex string.
+     * @example
+     *           mcode.hexify('Hello, World!');  // returns: "48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21"
+     */
+    hexify(text)
+    {
+        const buffer = Buffer.from(text, 'utf8');
+        const hex = buffer.toString('hex');
+
+        // Format the hex string into groups of 2 characters (1 byte)
+        return hex.match(/.{1,2}/g).join(' ');
+    },
+
+    /**
+     * @func extractId
+     * @memberof mcode
+     * @desc Extracts an alpha-numberic ID Field from a string, intended to be a unique portion of a common string.
+     * @param {string} objectName typically a file name, but can be any string, to extract an ID Field from.
+     * @returns {string} the extracted ID Field.
+     *
+     *  Rules for extracting the ID Field:
+     *  ----------------------------------
+     *  1. The ID Field is assumed to be the first alpha-numeric field in the string.
+     *  2. The ID Field is assumed to be Letters + Numbers, with no spaces or special characters.
+     *  3. The ID Field is assumed to be either at the beginning or end of the string, or separated by non-alpha-numeric characters.
+     *  4. The ID Field cound have lowercase 'placeholders' for numbers, like 'PxCy' or 'PnCn' for 'P1C2'.
+     *
+     * @example
+     *
+     * const str1 = "CG_BRKE01_20231116.L5K";
+     * const str2 = "CG_BRKE03_20231116.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "BRKE01"
+     * console.log(extractIdField(str2)); // Expected output: "BRKE03"
+     *
+     * const str1 = "EP_GPT13TZ1_20231115_0800.L5K";
+     * const str2 = "EP_GPT13TZ2_20231113_1600.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "GPT13TZ1"
+     * console.log(extractIdField(str2)); // Expected output: "GPT13TZ2"
+     *
+     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
+     * const str2 = "SEP_P3C0_GMP_ARL.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "P1C2"
+     * console.log(extractIdField(str2)); // Expected output: "P3C0"
+     *
+     * const str1 = "SEP_P1C2_GMP_ARL.L5K";
+     * const str2 = "SEP_PxCy_GMP.L5K";
+     *
+     * console.log(extractIdField(str1)); // Expected output: "P1C2"
+     * console.log(extractIdField(str2)); // Expected output: "PxCy"
+     *
+     *
+     */
+    extractId: function (objectName)
+    {
+        let idField = '';
+        let inAlphaNumeric = false;
+        let isLetter = false;
+        let isLowerL = false;
+        let isNumber = false;
+        let hasLetters = false;
+        let hasNumbers = false;
+        let si = 0;
+
+        // ƒ to check for upper case letter
+        const isUpper = (objectName, i) =>
+        {
+            // if 'i' is outside 'objectName' return false
+            if (i < 0 || i >= objectName.length)
+            {
+                return false;
+            }
+            return (objectName[i] >= 'A' && objectName[i] <= 'Z');
+        };
+
+        // scan the string for the first alpha-numeric field
+        for (let i = 0; i < objectName.length; i++)
+        {
+            isNumber = (objectName[i] >= '0' && objectName[i] <= '9');
+            isLetter = (objectName[i] >= 'A' && objectName[i] <= 'Z');
+            isLowerL = (objectName[i] >= 'a' && objectName[i] <= 'z');
+
+            if (isNumber || isLetter || isLowerL)
+            {
+                if (!inAlphaNumeric)
+                {
+                    inAlphaNumeric = true;
+                    si = i;
+                }
+                idField += objectName[i];
+                hasLetters = hasLetters || isLetter || isLowerL;
+                hasNumbers = hasNumbers || isNumber;
+
+                // Check for 'lower case numeric placeholder' like 'PxCy' or 'PnCn' for 'P1C2'
+                if (isUpper(objectName, i - 1) && isUpper(objectName, i + 1) && isLowerL)
+                {
+                    hasNumbers = true;  // treat the single lower case letter between upper case letters as a number placeholder
+                }
+            }
+            else
+            {
+                // hit non Alpha-Numeric character
+                if (inAlphaNumeric && hasLetters && hasNumbers)
+                {
+                    idField = objectName.substring(si, i);
+                    break;  // we have the field we want, exit to return it
+                }
+                else
+                {
+                    // current field does not meet criteria, reset and continue
+                    si = 0;
+                    idField = '';
+                    inAlphaNumeric = false;
+                    hasLetters = false;
+                    hasNumbers = false;
+                }
+            }
+        }
+
+        return idField || '';
     },
 
     /**

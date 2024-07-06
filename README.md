@@ -2,7 +2,7 @@
 
 A public NPM Package of our internal data processing tools for Frontend and Backend JavaScript NodeJS projects.
 
-This is an extremely 'light weight' package with _zero dependencies_ (other than our own logging package which has none).
+This is an extremely 'light weight' package with _zero dependencies_.
 
 Identical data and math handling on both...
 
@@ -17,19 +17,11 @@ This is our own internal data processing (data) code. It is used to gain more co
 > node examples
 ```
 
--   Example of package use...
-
-<p align="left"><img src=".\.github\images\mcode-data-example-calls.png" width="720" title="List Calls..."></p>
-
--   Corresponding results (logged to console by our **mcode-log** functions)...
-
-<p align="left"><img src=".\.github\images\mcode-data-example-results.png" width="720" title="List Results..."></p>
-
 ## Dependencies
 
 -   **Production**
 
-1. mcode-log - our standard logging package (_just for displaying list mismatch errors or test results_)
+1. None
 
 -   **Development**
 
@@ -70,10 +62,6 @@ node .\node_modules\mcode-data\examples
 npm install --save-dev jest
 npm test
 ```
-
--   A view of the JEST tests in the console...
-
-<p align="left"><img src=".\.github\images\mcode-data-jest.png" width="720" title="Jest Results..."></p>
 
 ## Included Functions
 
@@ -154,14 +142,22 @@ Contributor's names and contact info...
 
 ## Version History
 
--   0.0.0
-    -   Initial movement of our data handling functions from mcode-log to mcode-data.
+* 0.4.1
+    - Removed accidental dependency upon mcode-log.
+* 0.4.0
+    - Synchronized mcode-data, mcode-log, mcode-list, mcode-package.
+* 0.3.9
+    - Reorganization, all 'is' functions first.
+* 0.3.8
+    - Initial version, moved all data handling functions into new mcode-data package from mcode-log.
+* 0.0.0
+    - Initial movement of our data handling functions from mcode-log to mcode-data.
 
 ## Future Development
 
--   0.1.\*
-    -   Any additional core code we will develop for general list processing work.
-    -   Complex function execution with passed arguments or passed functions.
+*   0.1.\*
+    - Any additional core code we will develop for general list processing work.
+    - Complex function execution with passed arguments or passed functions.
 
 ## License
 
