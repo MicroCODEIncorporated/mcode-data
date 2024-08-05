@@ -511,6 +511,38 @@ const mcode = {
         // return the translated HTTP status code
         return ('' + httpCode + ': ' + httpResponse[httpCode] || 'Unknown HTTP Status');
     },
+
+    /**
+     * @func toSnakeCase
+     * @memberof mcode
+     * @desc Returns a lowercase-snake-case-name by converting a string's spaces to hyphens and discarding non-alphanumeric characters.
+     * @param {string} str the string to convert to snake case.
+     * @returns {string} a value representing the snake case version of the string.
+     */
+    toSnakeCase: function (str)
+    {
+        return str
+            .toLowerCase()            // convert the entire string to lowercase
+            .replace(/[^\w\s]/g, '')  // remove any non-alphanumeric characters except spaces
+            .replace(/\s+/g, '-')     // replace spaces with hyphens
+            .replace(/^-+|-+$/g, ''); // remove any leading or trailing hyphens
+    },
+
+    /**
+     * @func fromSnakeCase
+     * @memberof mcode
+     * @desc Returns a text string by converting a snake-case-name to Title Case Name sentence.
+     * @param {string} str the string to convert from snake case.
+     * @returns {string} a value representing the Title Case version of the string.
+     */
+    fromSnakeCase: function (str)
+    {
+        return str
+            .split('-')               // split the string at hyphens
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize the first letter of each word
+            .join(' ');               // join the words with spaces
+    },
+
 };
 
 // #endregion

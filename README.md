@@ -83,6 +83,8 @@ These are the functions we want at the ready in any module for development and d
 | **octify**       | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                          |
 | **hexify**       | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                          |
 | **extractId**    | Extracts the first alpha-numberic ID Field from a string. | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K") |
+| **fromSnakeCase**| Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string") |
+| **toSnakeCase**  | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String") |
 
 ### Documentation
 
@@ -142,6 +144,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.4.2
+    - Added 'fromSnakeCase()' and 'toSnakeCase()'.
 * 0.4.1
     - Removed accidental dependency upon mcode-log.
 * 0.4.0
