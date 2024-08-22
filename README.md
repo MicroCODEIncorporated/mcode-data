@@ -144,6 +144,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.4.3
+    - Corrected 'isJson()' to required the *1st* character be a '{', not any character.
 * 0.4.2
     - Added 'fromSnakeCase()' and 'toSnakeCase()'.
 * 0.4.1

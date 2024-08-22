@@ -61,6 +61,9 @@
  *                                    CommonJS/Node.js, and browser global in our exported module.
  *  01-Feb-2024   TJM-MCODE  {0003}   Swap() and Call() now throw an error if the 'keys' and 'values' lists are not the same length,
  *                                    instead of looging the error and returning a default value.
+ *  22-Aug-2024   TJM-MCODE  {0004}   Corrected isJson() to rely on 1st character being '{' to determine JSON string
+ *                                    it was returning true for any string that contained a '{' character,
+ *                                    this was signaling 'true' for HTMX templates that contained '{{variable}}'.
  *
  *
  *
@@ -225,7 +228,8 @@ const mcode = {
                 return false;
             }
 
-            if ((object).includes('{'))
+            // if the very first character is '{' then it's probably JSON
+            if (object.startsWith('{'))
             {
                 return true;  // treat as JSON -- JSON.parse() is overkill here
             }
