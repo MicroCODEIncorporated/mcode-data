@@ -78,8 +78,6 @@
 
 // #region  I M P O R T S
 
-const packageJson = require('./package.json');
-
 // #endregion
 
 // #region  T Y P E S
@@ -94,30 +92,6 @@ const packageJson = require('./package.json');
 
 // MicroCODE: define this module's name for our 'mcode-log' package
 const MODULE_NAME = 'mcode-data.js';
-
-// define local copy of 'getEnvVar()' for use before 'mcode' is loaded
-// this same function is available in 'mcode-env.js' but we need it here without that package
-
-/**
- * @function getEnvVar
- * @memberof mcode
- * @desc a private helper function that returns the value of an environment variable, or a default value if not found.
- * @param {any} key the name of the environment variable to get.
- * @param {any} defaultValue the default value to return if the environment variable is not found.
- * @returns {any} the value of the environment variable, or the default value if not found.
- */
-function getEnvVar(key, defaultValue)
-{
-    if (typeof process !== 'undefined' && process.env && key in process.env)
-    {
-        return process.env[key];
-    }
-    return defaultValue;
-};
-
-// get our environment variables if we're on a Node.js platform
-const theme = getEnvVar('THEME', 'dark'); // default to dark mode
-const mode = getEnvVar('NODE_ENV', 'development'); // default to development mode
 
 /**
  * @namespace mcode

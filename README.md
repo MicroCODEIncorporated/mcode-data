@@ -144,6 +144,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.0
+    - All 'mcode-*' packages updated with 'ready()' only implemented in 'mcode-log'.
 * 0.4.3
     - Corrected 'isJson()' to required the *1st* character be a '{', not any character.
 * 0.4.2
