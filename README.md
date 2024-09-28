@@ -85,6 +85,8 @@ These are the functions we want at the ready in any module for development and d
 | **extractId**    | Extracts the first alpha-numberic ID Field from a string. | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K") |
 | **fromSnakeCase**| Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string") |
 | **toSnakeCase**  | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String") |
+| HTTP Support     |                                                           |
+| **httpStatus**   | Converts a http status code into a message.               | mcode.httpStatus(code)                          |
 
 ### Documentation
 
@@ -144,6 +146,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.1
+    - Added 'httpStatus()' for use in mcode.resx() - see mcode-log package.
 * 0.5.0
     - All 'mcode-*' packages updated with 'ready()' only implemented in 'mcode-log'.
 * 0.4.3

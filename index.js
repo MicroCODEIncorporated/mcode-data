@@ -424,6 +424,7 @@ const mcode = {
             "101": "Switching Protocols",
             "102": "Processing",
             "103": "Early Hints",
+
             "200": "OK",
             "201": "Created",
             "202": "Accepted",
@@ -434,6 +435,7 @@ const mcode = {
             "207": "Multi-Status",
             "208": "Already Reported",
             "226": "IM Used",
+
             "300": "Multiple Choices",
             "301": "Moved Permanently",
             "302": "Found",
@@ -442,6 +444,7 @@ const mcode = {
             "305": "Use Proxy",
             "307": "Temporary Redirect",
             "308": "Permanent Redirect",
+
             "400": "Bad Request",
             "401": "Unauthorized",
             "402": "Payment Required",
@@ -472,6 +475,7 @@ const mcode = {
             "431": "Request Header Fields Too Large",
             "444": "Connection Closed Without Response",
             "451": "Unavailable For Legal Reasons",
+
             "500": "Internal Server Error",
             "501": "Not Implemented",
             "502": "Bad Gateway",
@@ -487,7 +491,8 @@ const mcode = {
         };
 
         // return the translated HTTP status code
-        return ('' + httpCode + ': ' + httpResponse[httpCode] || 'Unknown HTTP Status');
+        // example: `[404]: Not Found`
+        return (`[${httpCode}]: ` + httpResponse[httpCode] || 'Unknown HTTP Status');
     },
 
     /**
