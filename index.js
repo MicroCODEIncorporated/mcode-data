@@ -64,6 +64,8 @@
  *  22-Aug-2024   TJM-MCODE  {0004}   Corrected isJson() to rely on 1st character being '{' to determine JSON string
  *                                    it was returning true for any string that contained a '{' character,
  *                                    this was signaling 'true' for HTMX templates that contained '{{variable}}'.
+ *  05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
+ *
  *
  *
  *
@@ -493,6 +495,995 @@ const mcode = {
         // return the translated HTTP status code
         // example: `[404]: Not Found`
         return (`[${httpCode}]: ` + httpResponse[httpCode] || 'Unknown HTTP Status');
+    },
+
+    /**
+     * @func uuidDecode
+     * @memberof mcode
+     * @desc Decodes a UUID string into its component parts, this supports RFC 4122 and RFC 9562 UUIDs.
+     * @param {string} uuid a UUID string in the format 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+     * @param {boolean} localTime a flag to indicate if the timestamp should be converted to local time for display.
+     * @returns {string} a JSON object containing the decoded UUID parts.
+     */
+    uuidDecode: function (uuid, localTime = false)
+    {
+        // V A R I A N T S
+
+        const variants = [
+            "NCS compatibility",
+            "NCS compatibility",
+            "RFC 4122, RFC 9562",
+            "Microsoft GUIDs",
+        ];
+
+        // V E R S I O N S
+
+        // NCS compatibility (variant 0, 1)
+        const var1versions = [
+            "Undefined / Reserved / NIL",     // 0
+            " NCS Security Version",          // 1
+            " NCS Security Version",          // 2
+            " NCS Security Version",          // 3
+            " NCS Security Version",          // 4
+            " NCS Security Version",          // 5
+            " NCS Security Version",          // 6
+            " NCS Security Version",          // 7
+            " NCS Security Version",          // 8
+            " NCS Security Version",          // 9
+            " NCS Security Version",          // 10
+            " NCS Security Version",          // 11
+            " NCS Security Version",          // 12
+            " NCS Security Version",          // 13
+            " NCS Security Version",          // 14
+            "Undefined / Reserved / MAX",     // 15
+        ];
+
+        // RFC 4122 (Leach-Salz) (variant 2)
+        const var2versions = [
+            "Undefined / Reserved / NIL",     // 0
+            "Gregorian Unordered Timestamp",  // 1
+            "DCE Security (POSIX)",           // 2
+            "Name-Based (MD5 Hash)",          // 3
+            "Random-Based Number",            // 4
+            "Name Based (SHA-1 Hash)",        // 5
+            "Gregorian Ordered Timestamp",    // 6
+            "Unix Epoch Timestamp",           // 7
+            "Custom Encoding Format",         // 8
+            "Reserved for future defnition",  // 9
+            "Reserved for future defnition",  // 10
+            "Reserved for future defnition",  // 11
+            "Reserved for future defnition",  // 12
+            "Reserved for future defnition",  // 13
+            "Reserved for future defnition",  // 14
+            "Undefined / Reserved / MAX",     // 15
+        ];
+
+        // Microsoft GUIDs (variant 3)
+        const var3versions = [
+            "Undefined / Reserved / NIL",     // 0
+            "Microsoft GUID Version 1",       // 1
+            "Microsoft GUID Version 2",       // 2
+            "Microsoft GUID Version 3",       // 3
+            "Microsoft GUID Version 4",       // 4
+            "Microsoft GUID Version 5",       // 5
+            "Microsoft GUID Version 6",       // 6
+            "Microsoft GUID Version 7",       // 7
+            "Microsoft GUID Version 8",       // 8
+            "Microsoft GUID Version 9",       // 9
+            "Microsoft GUID Version 10",      // 10
+            "Microsoft GUID Version 11",      // 11
+            "Microsoft GUID Version 12",      // 12
+            "Microsoft GUID Version 13",      // 13
+            "Microsoft GUID Version 14",      // 14
+            "Undefined / Reserved / MAX",     // 15
+        ];
+
+        // L I S T S - by UUID Variant and their Versions
+
+        // ƒ Table of UUID Variants
+        const uuidVariants = [
+            uuidvar1,  // NCS compatibility
+            uuidvar1,  // NCS compatibility
+            uuidvar2,  // RFC 4122, RFC 9562
+            uuidvar3,  // Microsoft GUIDs
+        ];
+
+        // ƒ Table of UUID Layouts for Variant #0/1 (NCS compatibility)
+        const uuidvar1Layouts = [
+            uuidvarNIL,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvar1reserved,
+            uuidvarMAX,
+        ];
+
+        // ƒ Table of UUID Layouts for Variant #2 (RFC 4122, RFC 9562)
+        const uuidvar2Layouts = [
+            uuidvarNIL,
+            uuidvar2v1,
+            uuidvar2v2,
+            uuidvar2v3,
+            uuidvar2v4,
+            uuidvar2v5,
+            uuidvar2v6,
+            uuidvar2v7,
+            uuidvar2v8,
+            uuidvar2reserved,
+            uuidvar2reserved,
+            uuidvar2reserved,
+            uuidvar2reserved,
+            uuidvar2reserved,
+            uuidvar2reserved,
+            uuidvarMAX
+        ];
+
+        // ƒ Table of UUID Layouts for Variant #3 (GUID)
+        const uuidvar3Layouts = [
+            uuidvarNIL,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvar3reserved,
+            uuidvarMAX,
+        ];
+
+        // L A Y O U T S - by UUID Variant and their Versions
+
+        // ƒ UUID Variant #0 and #1 - NCS compatibility
+        function uuidvar1()
+        {
+            versionText = var1versions[version];
+            return uuidvar1Layouts[version]();
+        }
+
+        // ƒ UUID Variant #2 - RFC 4122 (Leach-Salz)
+        function uuidvar2()
+        {
+            versionText = var2versions[version];
+            return uuidvar2Layouts[version]();
+        }
+
+        // ƒ UUID Variant #3 - Microsoft GUIDs
+        function uuidvar3()
+        {
+            versionText = var3versions[version];
+            return uuidvar3Layouts[version]();
+        }
+
+        // V E R S I O N S - by UUID Variant
+
+        // ƒ UUIDvar*v0 - Unused / Reserved for 00000000-0000-0000-0000-000000000000
+        function uuidvarNIL()
+        {
+            // decoded by default as a generic UUID
+
+            return uuidGenericLayout();
+        }
+
+        // ƒ UUIDvar*v15 - Unused / Reserved for FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF
+        function uuidvarMAX()
+        {
+            // decoded by default as a generic UUID
+
+            return uuidGenericLayout();
+        }
+
+        // ƒ UUIDv1, UUIDv1 - 14 - Unused /  reserved UUID variants
+        function uuidvar1reserved()
+        {
+            // decoded by default as a generic UUID
+
+            return uuidGenericLayout();
+        }
+
+        // ƒ UUIDv2, UUIDv9-15 - Unused /  reserved UUID variants
+        function uuidvar2reserved()
+        {
+            // decoded by default as a generic UUID
+
+            return uuidGenericLayout();
+        }
+
+        // D E C O D E R S - by UUID Variant and their Versions
+
+        // ƒ to build a timestamp string in the format "YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC"
+        function makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime)
+        {
+            try
+            {
+                // Handle UUID version 1 (time-based)
+                const timeHigh = BigInt(parseInt(time_high, 16));
+                const timeMid = BigInt(parseInt(time_mid, 16));
+                const timeLow = BigInt(parseInt(time_low, 16));
+
+                // Combine the time fields into a 60-bit value using BigInt
+                const timeValue = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
+
+                // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
+                const timeValueInMs = timeValue / 10000n;
+
+                // Add time since UUID epoch to the precomputed epoch offset
+                const millisecondsSinceEpoch = Number(timeValueInMs + epochInMs);
+
+                // Convert to a JavaScript Date object
+                const timeDate = new Date(millisecondsSinceEpoch);
+
+                // Extract milliseconds and microseconds
+                const milliseconds = timeDate.getMilliseconds();
+                const microseconds = Number((timeValue % 10000n) / 10n);
+
+                if (localTime)
+                {
+                    // Format the value to "YYYY-MMM-DD HH:MM:SS.mmm.uuu AM/PM"
+                    const datePart = timeDate.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit'});
+                    const timePart = timeDate.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                    });
+                    const ampm = timePart.slice(-2); // AM/PM part
+                    const timeNoMeridian = timePart.slice(0, -3); // Time without AM/PM
+                    timestampText = `${datePart} ${timeNoMeridian}.${milliseconds.toString().padStart(3, '0')}.${microseconds.toString().padStart(3, '0')} ${ampm}`;
+                }
+                else
+                {
+                    // Format the value to "YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC"
+                    timestampText = timeDate.toISOString()
+                        .replace('T', ' ')
+                        .replace('Z', '')
+                        .replace(/\.\d{3}/, `.${milliseconds.toString().padStart(3, '0')}.${microseconds.toString().padStart(3, '0')} UTC`);
+                }
+            }
+            catch
+            {
+                // If there is an error, return the raw timestamp
+                timestampText = `${time_high}${time_mid}${time_low}`;
+            }
+            return timestampText;
+        }
+
+        // ƒ UUIDv1 - Unordered Time-based UUID
+        function uuidvar2v1()
+        {
+            /*
+             UUIDv1 Field and Bit Layout - Gregorian Unordered Time-based UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         time_low                              |
+            +---------------+---------------+--------+------+---------------+
+            |            time_mid           |   ver  |     time_high        |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        clock_seq          |            node               |
+            +---+-----------+---------------+---------------+---------------+
+            |                            node                               |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const time_low = part_a1;
+            const time_mid = part_a0;
+            const time_high = part_b;
+            const time = `${time_high}${time_mid}${time_low}`;
+            const clock_seq = part_c2;
+            const clockSeq = BigInt(parseInt(clock_seq, 16));
+            const node = part_c1 + part_c0;
+
+            // Determine if the node is multicast based on the first bit of 'node'
+            const multicastBit = parseInt(node.substring(0, 1), 16) >> 3;  // Extract multicast flag (1 bit) from node
+            const multicast = multicastBit === 1;
+            const multicastText = multicast ? 'Multicast' : 'Unicast';
+
+            // The reset is based on UUID Variant and the Version of that Variant...
+            let nodeType;
+            let nodeValue;
+
+            // Multicast or Unicast Addressed node
+            nodeType = multicast ? 'MAC Address (Multicast)' : 'MAC Address (Unicast)';
+            nodeValue = node.match(/.{2}/g).join(':');
+
+            // The epoch is October 15, 1582 (start of UUID time)
+            const epochInMs = BigInt(Date.UTC(1582, 9, 15));
+
+            // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
+            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime);
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "Timestamp",
+                Value1: timestampText,
+
+                Value2Name: "Clock Sequence",
+                Value2: clockSeq,
+
+                Value3Name: "",
+                Value3: "",
+
+                Value4Name: "Node Type",
+                Value4: nodeType,
+
+                Value5Name: "Node Address",
+                Value5: `${nodeValue}`,
+
+                Value6Name: "",
+                Value6: "",
+
+                NumberName: "Random Number",
+                NumberText: `0x${time_high}${time_mid}${time_low}`,
+
+                time_low: time_low,
+                time_mid: time_mid,
+                time_high: time_high,
+                time: time,
+                clock_seq: clock_seq,
+                multicast: multicast,
+                multicastText: multicastText,
+                node: node,
+            };
+        }
+
+        // ƒ UUIDv2 - DCE Security (POSIX) UUID
+        function uuidvar2v2()
+        {
+            /*
+             UUIDv2 Field and Bit Layout -  DCE Security (POSIX) UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         part_a1                               |
+            +---------------+---------------+--------+------+---------------+
+            |            part_a0            |   ver  |     part_b           |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        part_c2            |            part_c1            |
+            +---+-----------+---------------+---------------+---------------+
+            |                            part_c0                            |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            // {TBD} - not documented in RFC 9562
+
+            return uuidGenericLayout();
+        }
+
+        // ƒ UUIDv3 - Name-Based (MD5 Hash) UUID
+        function uuidvar2v3()
+        {
+            /*
+             UUIDv3 Field and Bit Layout - Name-Based (MD5 Hash) UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         md5_high_1                            |
+            +---------------+---------------+--------+------+---------------+
+            |            md5_high_0         |   ver  |     md5_mid          |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        md5_low_2          |            md5_low_1          |
+            +---+-----------+---------------+---------------+---------------+
+            |                            md5_low_0                          |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const md5_high_1 = part_a1;
+            const md5_high_0 = part_a0;
+            const md5_high = `${md5_high_1}${md5_high_0}`;
+            const md5_mid = part_b;
+            const md5_low_2 = part_c2;
+            const md5_low_1 = part_c1;
+            const md5_low_0 = part_c0;
+            const md5_low = `${md5_low_2}${md5_low_1}${md5_low_0}`;
+
+            const md5 = `${md5_high}${md5_mid}${md5_low}`;
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "md5_high",
+                Value1: md5_high,
+
+                Value2Name: "md5_mid",
+                Value2: md5_mid,
+
+                Value3Name: "md5_low",
+                Value3: md5_low,
+
+                Value4Name: "",
+                Value4: '',
+
+                Value5Name: "",
+                Value5: '',
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "MD5 Hash",
+                NumberText: `0x${md5}`,
+
+                md5_high: md5_high,
+                md5_mid: md5_mid,
+                md5_low: md5_low,
+
+                MD5: md5
+            };
+        }
+
+        // ƒ UUIDv4 - Random-Based Number UUID
+        function uuidvar2v4()
+        {
+            /*
+             UUIDv4 Field and Bit Layout - Random-Based Number UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                        random_a1                              |
+            +---------------+---------------+--------+------+---------------+
+            |            random_a0          |   ver  |     random_b         |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        random_c2          |            random_c1          |
+            +---+-----------+---------------+---------------+---------------+
+            |                            part_c0                            |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const random_a1 = part_a1;
+            const random_a0 = part_a0;
+            const random_a = `${random_a1}${random_a0}`;
+            const random_b = part_b;
+            const random_c2 = part_c2;
+            const random_c1 = part_c1;
+            const random_c0 = part_c0;
+            const random_c = `${random_c2}${random_c1}${random_c0}`;
+
+            const random = `${random_a}${random_b}${random_c}`;
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "random_a",
+                Value1: random_a,
+
+                Value2Name: "random_b",
+                Value2: random_b,
+
+                Value3Name: "random_c",
+                Value3: random_c,
+
+                Value4Name: "",
+                Value4: '',
+
+                Value5Name: "",
+                Value5: '',
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "Random Number",
+                NumberText: `0x${random}`,
+
+                random_a: random_a,
+                random_b: random_b,
+                random_c: random_c,
+
+                Random: random
+            };
+        }
+
+        // ƒ UUIDv5 - Name Based (SHA-1 Hash) UUID
+        function uuidvar2v5()
+        {
+            /*
+             UUIDv5 Field and Bit Layout -  Name Based (SHA-1 Hash) UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         sha1_high_1                           |
+            +---------------+---------------+--------+------+---------------+
+            |            sha1_high_0        |   ver  |     sha1_mid         |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        sha1_low_2         |            sha1_low_1         |
+            +---+-----------+---------------+---------------+---------------+
+            |                            sha1_low_0                         |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const sha1_high_1 = part_a1;
+            const sha1_high_0 = part_a0;
+            const sha1_high = `${sha1_high_1}${sha1_high_0}`;
+            const sha1_mid = part_b;
+            const sha1_low_2 = part_c2;
+            const sha1_low_1 = part_c1;
+            const sha1_low_0 = part_c0;
+            const sha1_low = `${sha1_low_2}${sha1_low_1}${sha1_low_0}`;
+
+            const sha1 = `${sha1_high}${sha1_mid}${sha1_low}`;
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "sha1_high",
+                Value1: sha1_high,
+
+                Value2Name: "sha1_mid",
+                Value2: sha1_mid,
+
+                Value3Name: "sha1_low",
+                Value3: sha1_low,
+
+                Value4Name: "",
+                Value4: '',
+
+                Value5Name: "",
+                Value5: '',
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "SHA-1 Hash",
+                NumberText: `0x${sha1}`,
+
+                sha1_high: sha1_high,
+                sha1_mid: sha1_mid,
+                sha1_low: sha1_low,
+
+                "SHA-1": sha1
+            };
+        }
+
+        // ƒ UUIDv6 - Gregorian Ordered Timestamp UUID
+        function uuidvar2v6()
+        {
+            /*
+             UUIDv6 Field and Bit Layout - Gregorian Ordered Timestamp UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         time_high                             |
+            +---------------+---------------+--------+------+---------------+
+            |            time_mid           |   ver  |     time_low         |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        clock_seq          |            node               |
+            +---+-----------+---------------+---------------+---------------+
+            |                            node                               |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const time_high = part_a1;
+            const time_mid = part_a0;
+            const time_low = part_b;
+            const time = `${time_high}${time_mid}${time_low}`;
+            const clock_seq = part_c2;
+            const clockSeq = BigInt(parseInt(clock_seq, 16));
+            const node = part_c1 + part_c0;
+
+            // Determine if the node is multicast based on the first bit of 'node'
+            const multicastBit = parseInt(node.substring(0, 1), 16) >> 3;  // Extract multicast flag (1 bit) from node
+            const multicast = multicastBit === 1;
+            const multicastText = multicast ? 'Multicast' : 'Unicast';
+
+            // The reset is based on UUID Variant and the Version of that Variant...
+            let nodeType;
+            let nodeValue;
+
+            // Multicast or Unicast Addressed node
+            nodeType = multicast ? 'MAC Address (Multicast)' : 'MAC Address (Unicast)';
+            nodeValue = node.match(/.{2}/g).join(':');
+
+            // The epoch is October 15, 1582 (start of UUID time)
+            const epochInMs = BigInt(Date.UTC(1582, 9, 15));
+
+            // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
+            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime);
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "Timestamp",
+                Value1: timestampText,
+
+                Value2Name: "Clock Sequence",
+                Value2: clockSeq,
+
+                Value3Name: "",
+                Value3: "",
+
+                Value4Name: "Node Type",
+                Value4: nodeType,
+
+                Value5Name: "Node Address",
+                Value5: `${nodeValue}`,
+
+                Value6Name: "",
+                Value6: "",
+
+                NumberName: "Random Number",
+                NumberText: `0x${time_high}${time_mid}${time_low}`,
+
+                time_low: time_low,
+                time_mid: time_mid,
+                time_high: time_high,
+                time: time,
+                clock_seq: clock_seq,
+                multicast: multicast,
+                multicastText: multicastText,
+                node: node,
+            };
+        }
+
+        // ƒ UUIDv7 - Unix Epoch Timestamp UUID
+        function uuidvar2v7()
+        {
+            /*
+             UUIDv7 Field and Bit Layout - Unix Epoch Timestamp UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         unix_ts1_ms                           |
+            +---------------+---------------+--------+------+---------------+
+            |            unix_ts0_ms        |   ver  |     rand_a           |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        rand_b2            |            rand_b1            |
+            +---+-----------+---------------+---------------+---------------+
+            |                            rand_b0                            |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const unix_ts1_ms = part_a1;
+            const unix_ts0_ms = part_a0;
+            const unix_ts_ms = `${unix_ts1_ms}${unix_ts0_ms}`;
+            const rand_a = part_b;
+            const rand_b2 = part_c2;
+            const rand_b1 = part_c1;
+            const rand_b0 = part_c0;
+            const rand_b = `${rand_b2}${rand_b1}${rand_b0}`;
+            const rand = `${rand_a}${rand_b}`;
+
+            // The epoch is January 1, 1970 (start of UNIX time)
+            const epochInMs = BigInt(Date.UTC(1970, 1, 1));
+
+            // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
+            const timestampText = makeTimestamp('', unix_ts1_ms, unix_ts0_ms, epochInMs, localTime);
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "Timestamp",
+                Value1: timestampText,
+
+                Value2Name: "",
+                Value2: "",
+
+                Value3Name: "",
+                Value3: "",
+
+                Value4Name: "rand_a",
+                Value4: rand_a,
+
+                Value5Name: "rand_b",
+                Value5: rand_b,
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "Random Number",
+                NumberText: `0x${rand}`,
+
+                rand_a: rand_a,
+                rand_b: rand_b,
+                rand: rand,
+
+                unix_ts_ms: unix_ts_ms,
+
+                Random: rand
+            };
+        }
+
+        // ƒ UUIDv8 - Custom Encoding Format UUID
+        function uuidvar2v8()
+        {
+            /*
+             UUIDv8 Field and Bit Layout - Custom Encoding Format UUID:
+             3             2               1               0               0
+             1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+            +---------------+---------------+---------------+---------------+
+            |                         custom_a1                             |
+            +---------------+---------------+--------+------+---------------+
+            |            custom_a0          |   ver  |     custom_b         |
+            ----+-----------+---------------+--------+------+---------------+
+            |var|        custom_c2          |            custom_c1          |
+            +---+-----------+---------------+---------------+---------------+
+            |                            custom_c0                          |
+            +---------------+---------------+---------------+---------------+
+            */
+
+            const custom_a1 = part_a1;
+            const custom_a0 = part_a0;
+            const custom_a = `${custom_a1}${custom_a0}`;
+            const custom_b = part_b;
+            const custom_c2 = part_c2;
+            const custom_c1 = part_c1;
+            const custom_c0 = part_c0;
+            const custom_c = `${custom_c2}${custom_c1}${custom_c0}`;
+
+            const custom = `${custom_a}${custom_b}${custom_c}`;
+
+            // Return Variant 2 UUIDv1 Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "custom_a",
+                Value1: custom_a,
+
+                Value2Name: "custom_b",
+                Value2: custom_b,
+
+                Value3Name: "custom_c",
+                Value3: custom_c,
+
+                Value4Name: "",
+                Value4: '',
+
+                Value5Name: "",
+                Value5: '',
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "Custom Encoding",
+                NumberText: `0x${custom}`,
+
+                custom_a: custom_a,
+                custom_b: custom_b,
+                custom_c: custom_c,
+
+                Custom: custom
+            };
+        }
+
+        // ƒ UUIDv3, Microsoft GUID, UUIDv1 - 14 - Unused /  reserved UUID variants
+        function uuidvar3reserved()
+        {
+            // decoded by default as a generic UUID
+
+            return uuidGenericLayout();
+        }
+
+        /*
+         UUID Generic Structure:
+         3             2               1               0               0
+         1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+        +---------------+---------------+---------------+---------------+
+        |                         part_a1                               |
+        +---------------+---------------+--------+------+---------------+
+        |            part_a0            |   ver  |     part_b           |
+        ----+-----------+---------------+--------+------+---------------+
+        |var|        part_c2            |            part_c1            |
+        +---+-----------+---------------+---------------+---------------+
+        |                            part_c0                            |
+        +---------------+---------------+---------------+---------------+
+        */
+
+        // ƒ uuidGenericLayout - Generic UUID Layout
+        function uuidGenericLayout()
+        {
+            const random = `${part_a1}${part_a0}${part_b}${part_c2}${part_c1}${part_c0}`;
+
+            // Return Generic UUID Decoded
+            return {
+
+                UUID: uuid,
+
+                Variant: variant,
+                VariantText: variantText,
+
+                Version: version,
+                VersionText: versionText,
+
+                Value1Name: "part_a",
+                Value1: part_a,
+
+                Value2Name: "part_b",
+                Value2: part_b,
+
+                Value3Name: "part_c",
+                Value3: part_c,
+
+                Value4Name: "",
+                Value4: '',
+
+                Value5Name: "",
+                Value5: '',
+
+                Value6Name: "",
+                Value6: '',
+
+                NumberName: "Random Number",
+                NumberText: `0x${random}`,
+
+                part_a: part_a,
+                part_b: part_b,
+                part_c: part_c,
+
+                Random: random
+            };
+        }
+
+        // M A I N - D E C O D E R
+
+        // Split the UUID into parts: aaaaaaaa-aaaa-vbbb-Vccc-cccccccccccc
+        //                            11111111 0000       222 111100000000
+
+        // These pieces are common divisions of all UUIDs and they are interpreted
+        // based on the UUID variant and version.
+        uuid = uuid.toLowerCase();
+        const UUID = uuid.toUpperCase();
+        const [part_a1, part_a0, ver_part_b, var_part_c1, part_c1_c0] = uuid.split('-');
+        const part_a = `${part_a1}${part_a0}`;
+        const version = parseInt(ver_part_b.substring(0, 1), 16);
+        const part_b = ver_part_b.substring(1);
+        const variant = (parseInt(var_part_c1.substring(0, 1), 16) >> 2) & 0b11;
+        const part_c2 = (parseInt(var_part_c1.substring(0, 1), 16) & 0b11).toString(16) + var_part_c1.substring(1);
+        const part_c1 = part_c1_c0.substring(0, 4);
+        const part_c0 = part_c1_c0.substring(4);
+        const part_c = `${part_c2}${part_c1}${part_c0}`;
+
+        // How to interpret the UUID...
+        const variantText = variants[variant];
+        let versionText = '<undetermined>';
+        let variantValue1Name = 'part_a1';
+        let variantValue1 = part_a1;
+        let variantValue2Name = 'part_a0';
+        let variantValue2 = part_a0;
+        let variantValue3Name = 'part_b';
+        let variantValue3 = part_b;
+        let variantValue4Name = 'part_c2';
+        let variantValue4 = part_c2;
+        let variantValue5Name = 'part_c1';
+        let variantValue5 = part_c1;
+        let variantValue6Name = 'part_c0';
+        let variantValue6 = part_c0;
+
+        // If every thing is "0" then it's a NIL Value
+        if (UUID === "00000000-0000-0000-0000-000000000000")
+        {
+            return {
+                UUID: uuid,
+                Variant: variant,
+                VariantText: "NIL Value",
+
+                Version: version,
+                VersionText: "Reserved / NIL",
+
+                Value1Name: "",
+                Value1: "",
+                Value2Name: "",
+                Value2: "",
+                Value3Name: "",
+                Value3: "",
+                Value4Name: "",
+                Value4: "",
+                Value5Name: "",
+                Value5: "",
+                Value6Name: "",
+                Value6: "",
+
+                NumberName: "",
+                NumberText: "",
+
+                NIL: true,
+                NILText: "00000000-0000-0000-0000-000000000000"
+            };
+        }
+        else if (UUID === "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")
+        {
+            return {
+                UUID: uuid,
+                Variant: variant,
+                VariantText: "MAX Value",
+
+                Version: version,
+                VersionText: "Reserved / MAX",
+
+                Value1Name: "",
+                Value1: "",
+                Value2Name: "",
+                Value2: "",
+                Value3Name: "",
+                Value3: "",
+                Value4Name: "",
+                Value4: "",
+                Value5Name: "",
+                Value5: "",
+                Value6Name: "",
+                Value6: "",
+
+                NumberName: "",
+                NumberText: "",
+
+                MAX: true,
+                MAXText: "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
+            };
+        }
+        else
+        {
+            // Decode the UUID based on the variant and version
+            return uuidVariants[variant]();
+        }
     },
 
     /**

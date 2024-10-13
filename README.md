@@ -87,6 +87,8 @@ These are the functions we want at the ready in any module for development and d
 | **toSnakeCase**  | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String") |
 | HTTP Support     |                                                           |
 | **httpStatus**   | Converts a http status code into a message.               | mcode.httpStatus(code)                          |
+| UUID Support     |                                                           |
+| **uuidDecode**   | Decodes a UUID string into a JSON object.                 | mcode.uuidDecode('LLLLLLLL-MMMM-vHHH-VSSS-CNNNNNNNNNNN')                          |
 
 ### Documentation
 
@@ -146,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.2
+    - Added 'uuidDecode()' to display an immediate decoding of a UUID thru a JSON Object.
 * 0.5.1
     - Added 'httpStatus()' for use in mcode.resx() - see mcode-log package.
 * 0.5.0
