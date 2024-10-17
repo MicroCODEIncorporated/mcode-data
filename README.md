@@ -148,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.3
+    - Corrected 'uuidDecode()' handling of timestamps in UUIDv6 and UUIDv7.
 * 0.5.2
     - Added 'uuidDecode()' to display an immediate decoding of a UUID thru a JSON Object.
 * 0.5.1

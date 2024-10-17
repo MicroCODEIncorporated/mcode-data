@@ -708,30 +708,55 @@ const mcode = {
         // D E C O D E R S - by UUID Variant and their Versions
 
         // ƒ to build a timestamp string in the format "YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC"
-        function makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime)
+        function makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime, version)
         {
+            console.log({time_high, time_mid, time_low, epochInMs, localTime, version});
+
             try
             {
                 // Handle UUID version 1 (time-based)
                 const timeHigh = BigInt(parseInt(time_high, 16));
                 const timeMid = BigInt(parseInt(time_mid, 16));
                 const timeLow = BigInt(parseInt(time_low, 16));
+                let timeValue, timeValueInMs, millisecondsSinceEpoch, timeDate;
 
-                // Combine the time fields into a 60-bit value using BigInt
-                const timeValue = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
-
-                // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
-                const timeValueInMs = timeValue / 10000n;
-
-                // Add time since UUID epoch to the precomputed epoch offset
-                const millisecondsSinceEpoch = Number(timeValueInMs + epochInMs);
-
-                // Convert to a JavaScript Date object
-                const timeDate = new Date(millisecondsSinceEpoch);
+                switch (version)
+                {
+                    case 1:
+                        // Combine the time fields into a 60-bit value using BigInt
+                        timeValue = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
+                        // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
+                        timeValueInMs = timeValue / 10000n;
+                        // Add time since UUID epoch to the precomputed epoch offset
+                        millisecondsSinceEpoch = Number(timeValueInMs + epochInMs);
+                        // Convert to a JavaScript Date object
+                        timeDate = new Date(millisecondsSinceEpoch);
+                        break;
+                    case 6:
+                        // Combine the time fields into a 60-bit value using BigInt
+                        timeValue = (timeHigh << 28n) | (timeMid << 12n) | timeLow;
+                        // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
+                        timeValueInMs = timeValue / 10000n;
+                        // Add time since UUID epoch to the precomputed epoch offset
+                        millisecondsSinceEpoch = Number(timeValueInMs + epochInMs);
+                        // Convert to a JavaScript Date object
+                        timeDate = new Date(millisecondsSinceEpoch);
+                        break;
+                    case 7:
+                        // Combine the 48-bit timestamp from the first two fields
+                        timeValue = (timeHigh << 16n) | timeLow;
+                        // Convert the Unix timestamp (milliseconds since Unix epoch)
+                        timeDate = new Date(Number(timeValue));
+                        break;
+                    default:
+                        // Combine the time fields into a 60-bit value using BigInt
+                        timeValue = 0;
+                        break;
+                }
 
                 // Extract milliseconds and microseconds
                 const milliseconds = timeDate.getMilliseconds();
-                const microseconds = Number((timeValue % 10000n) / 10n);
+                const microseconds = (version === 7) ? 0 : Number((timeValue % 10000n) / 10n);
 
                 if (localTime)
                 {
@@ -759,7 +784,7 @@ const mcode = {
             catch
             {
                 // If there is an error, return the raw timestamp
-                timestampText = `${time_high}${time_mid}${time_low}`;
+                timestampText = `${time_high}${time_mid}${time_low} - decode error`;
             }
             return timestampText;
         }
@@ -807,7 +832,7 @@ const mcode = {
             const epochInMs = BigInt(Date.UTC(1582, 9, 15));
 
             // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
-            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime);
+            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime, 1);
 
             // Return Variant 2 UUIDv1 Decoded
             return {
@@ -1125,7 +1150,7 @@ const mcode = {
             const epochInMs = BigInt(Date.UTC(1582, 9, 15));
 
             // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
-            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime);
+            const timestampText = makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime, 6);
 
             // Return Variant 2 UUIDv1 Decoded
             return {
@@ -1201,8 +1226,8 @@ const mcode = {
             // The epoch is January 1, 1970 (start of UNIX time)
             const epochInMs = BigInt(Date.UTC(1970, 1, 1));
 
-            // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC'
-            const timestampText = makeTimestamp('', unix_ts1_ms, unix_ts0_ms, epochInMs, localTime);
+            // Get 'YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC' - v7 onlt has a High and Low, no Mid
+            const timestampText = makeTimestamp(unix_ts1_ms, 0, unix_ts0_ms, epochInMs, localTime, 7);
 
             // Return Variant 2 UUIDv1 Decoded
             return {
