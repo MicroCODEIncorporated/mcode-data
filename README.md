@@ -148,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.4
+    - Corrected 'uuidDecode()' removed cnsole.log debug statement.
 * 0.5.3
     - Corrected 'uuidDecode()' handling of timestamps in UUIDv6 and UUIDv7.
 * 0.5.2

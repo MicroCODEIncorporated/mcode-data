@@ -710,8 +710,6 @@ const mcode = {
         // ƒ to build a timestamp string in the format "YYYY-MMM-DD HH:MM:SS.mmm.uuu UTC"
         function makeTimestamp(time_high, time_mid, time_low, epochInMs, localTime, version)
         {
-            console.log({time_high, time_mid, time_low, epochInMs, localTime, version});
-
             try
             {
                 // Handle UUID version 1 (time-based)
