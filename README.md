@@ -148,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.5
+    - Minor reformatting of the 'httpStatus()' message to [BRACKET] the subsystem producing the message.
 * 0.5.4
     - Corrected 'uuidDecode()' removed cnsole.log debug statement.
 * 0.5.3

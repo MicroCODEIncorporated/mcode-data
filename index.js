@@ -416,7 +416,7 @@ const mcode = {
      * @memberof mcode
      * @desc Returns the text for a given HTTP status code.
      * @param {object} httpCode the HTTP status code to translate.
-     * @returns {string} a value representing the English meaning of a HTTP status code.
+     * @returns {string} a value representing the English meaning of a HTTP status code, formatted for display.
      */
     httpStatus: function (httpCode)
     {
@@ -493,8 +493,8 @@ const mcode = {
         };
 
         // return the translated HTTP status code
-        // example: `[404]: Not Found`
-        return (`[${httpCode}]: ` + httpResponse[httpCode] || 'Unknown HTTP Status');
+        // example: `[HTTP] 404: Not Found`
+        return (`[HTTP] ${httpCode}: ` + httpResponse[httpCode] || 'Unknown HTTP Status');
     },
 
     /**
