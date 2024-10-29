@@ -92,7 +92,7 @@ These are the functions we want at the ready in any module for development and d
 
 ### Documentation
 
-We believe is explicit code documentation, for other users, and for our 'future selves'.<br>
+We believe in explicit code documentation, for other users, and for our 'future selves'.<br>
 JSDocs is a standardized system for documenting functions and data structures that produces three (3) primary outputs:
 
 1. Inline documentation for the coder.
