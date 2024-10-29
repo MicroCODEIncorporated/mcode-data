@@ -1410,6 +1410,37 @@ const mcode = {
 
         // Split the UUID into parts: aaaaaaaa-aaaa-vbbb-Vccc-cccccccccccc
         //                            11111111 0000       222 111100000000
+        if (!uuid)
+        {
+            // return NIL for a missing UUID
+            return {
+                UUID: uuid,
+                Variant: variant,
+                VariantText: "NIL Value",
+
+                Version: version,
+                VersionText: "Reserved / NIL",
+
+                Value1Name: "",
+                Value1: "",
+                Value2Name: "",
+                Value2: "",
+                Value3Name: "",
+                Value3: "",
+                Value4Name: "",
+                Value4: "",
+                Value5Name: "",
+                Value5: "",
+                Value6Name: "",
+                Value6: "",
+
+                NumberName: "",
+                NumberText: "",
+
+                NIL: true,
+                NILText: "00000000-0000-0000-0000-000000000000"
+            };
+        }
 
         // These pieces are common divisions of all UUIDs and they are interpreted
         // based on the UUID variant and version.

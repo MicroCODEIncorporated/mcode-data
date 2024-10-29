@@ -148,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* v0.5.6
+    - Updated 'uuidDecode()' to return the NIL UUID for a missing UUID parameter.
 * v0.5.5
     - Minor reformatting of the 'httpStatus()' message to [BRACKET] the subsystem producing the message.
 * v0.5.4
