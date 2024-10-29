@@ -148,36 +148,36 @@ Contributor's names and contact info...
 
 ## Version History
 
-* 0.5.5
+* v0.5.5
     - Minor reformatting of the 'httpStatus()' message to [BRACKET] the subsystem producing the message.
-* 0.5.4
+* v0.5.4
     - Corrected 'uuidDecode()' removed cnsole.log debug statement.
-* 0.5.3
+* v0.5.3
     - Corrected 'uuidDecode()' handling of timestamps in UUIDv6 and UUIDv7.
-* 0.5.2
+* v0.5.2
     - Added 'uuidDecode()' to display an immediate decoding of a UUID thru a JSON Object.
-* 0.5.1
+* v0.5.1
     - Added 'httpStatus()' for use in mcode.resx() - see mcode-log package.
-* 0.5.0
+* v0.5.0
     - All 'mcode-*' packages updated with 'ready()' only implemented in 'mcode-log'.
-* 0.4.3
+* v0.4.3
     - Corrected 'isJson()' to required the *1st* character be a '{', not any character.
-* 0.4.2
+* v0.4.2
     - Added 'fromSnakeCase()' and 'toSnakeCase()'.
-* 0.4.1
+* v0.4.1
     - Removed accidental dependency upon mcode-log.
-* 0.4.0
+* v0.4.0
     - Synchronized mcode-data, mcode-log, mcode-list, mcode-package.
-* 0.3.9
+* v0.3.9
     - Reorganization, all 'is' functions first.
-* 0.3.8
+* v0.3.8
     - Initial version, moved all data handling functions into new mcode-data package from mcode-log.
-* 0.0.0
+* v0.0.0
     - Initial movement of our data handling functions from mcode-log to mcode-data.
 
 ## Future Development
 
-*   0.1.\*
+* v0.1.\*
     - Any additional core code we will develop for general list processing work.
     - Complex function execution with passed arguments or passed functions.
 
