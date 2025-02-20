@@ -148,6 +148,11 @@ Contributor's names and contact info...
 
 ## Version History
 
+* v0.5.8
+    - Updated 'httpStatus()' to use a STATIC copy of HTTP codes list for speed.
+    - Updated 'uuidDecode()' to use all STATIC text lists for speed.
+* v0.5.7
+    - Corrected cross-spawn  7.0.0 - 7.0.4; Severity: high; Regular Expression Denial of Service.
 * v0.5.6
     - Updated 'uuidDecode()' to return the NIL UUID for a missing UUID parameter.
 * v0.5.5

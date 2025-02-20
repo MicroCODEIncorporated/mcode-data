@@ -14,7 +14,7 @@
  *
  *      MIT License: MicroCODE.mcode-data
  *
- *      Copyright (c) 2022-2024 Timothy McGuire, MicroCODE, Inc.
+ *      Copyright (c) 2022-2025 Timothy McGuire, MicroCODE, Inc.
  *
  *      Permission is hereby granted, free of charge, to any person obtaining a copy
  *      of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,8 @@
  *                                    it was returning true for any string that contained a '{' character,
  *                                    this was signaling 'true' for HTMX templates that contained '{{variable}}'.
  *  05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
- *
+ *  19-Feb-2025   TJM-MCODE  {0006}   0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
+ *                                           - updated all UUID string lists to STATIC as well.
  *
  *
  *
@@ -94,6 +95,150 @@
 
 // MicroCODE: define this module's name for our 'mcode-log' package
 const MODULE_NAME = 'mcode-data.js';
+
+// Static copy of HTTP codes for httpStatus() function for speed - {0006}
+const HTTP_CODES =
+{
+    "100": "Continue",
+    "101": "Switching Protocols",
+    "102": "Processing",
+    "103": "Early Hints",
+
+    "200": "OK",
+    "201": "Created",
+    "202": "Accepted",
+    "203": "Non-Authoritative Information",
+    "204": "No Content",
+    "205": "Reset Content",
+    "206": "Partial Content",
+    "207": "Multi-Status",
+    "208": "Already Reported",
+    "226": "IM Used",
+
+    "300": "Multiple Choices",
+    "301": "Moved Permanently",
+    "302": "Found",
+    "303": "See Other",
+    "304": "Not Modified",
+    "305": "Use Proxy",
+    "307": "Temporary Redirect",
+    "308": "Permanent Redirect",
+
+    "400": "Bad Request",
+    "401": "Unauthorized",
+    "402": "Payment Required",
+    "403": "Forbidden",
+    "404": "Not Found",
+    "405": "Method Not Allowed",
+    "406": "Not Acceptable",
+    "407": "Proxy Authentication Required",
+    "408": "Request Timeout",
+    "409": "Conflict",
+    "410": "Gone",
+    "411": "Length Required",
+    "412": "Precondition Failed",
+    "413": "Payload Too Large",
+    "414": "URI Too Long",
+    "415": "Unsupported Media Type",
+    "416": "Range Not Satisfiable",
+    "417": "Expectation Failed",
+    "418": "I'm a Teapot", // indicates that the server refuses to brew coffee because it is a teapot. (An April fool’s joke from 1998)
+    "421": "Misdirected Request",
+    "422": "Unprocessable Entity",
+    "423": "Locked",
+    "424": "Failed Dependency",
+    "425": "Too Early",
+    "426": "Upgrade Required",
+    "428": "Precondition Required",
+    "429": "Too Many Requests",
+    "431": "Request Header Fields Too Large",
+    "444": "Connection Closed Without Response",
+    "451": "Unavailable For Legal Reasons",
+
+    "500": "Internal Server Error",
+    "501": "Not Implemented",
+    "502": "Bad Gateway",
+    "503": "Service Unavailable",
+    "504": "Gateway Timeout",
+    "505": "HTTP Version Not Supported",
+    "506": "Variant Also Negotiates",
+    "507": "Insufficient Storage",
+    "508": "Loop Detected",
+    "509": "Bandwidth Limit Exceeded",
+    "510": "Not Extended",
+    "511": "Network Authentication Required"
+};
+
+// U U I D - V A R I A N T S
+
+const UUID_VARIANTS = [
+    "NCS compatibility",
+    "NCS compatibility",
+    "RFC 4122, RFC 9562",
+    "Microsoft GUIDs",
+];
+
+// U U I D - V E R S I O N S
+
+// NCS compatibility (variant 0, 1)
+const UUID_VAR1_VERSIONS = [
+    "Undefined / Reserved / NIL",     // 0
+    " NCS Security Version",          // 1
+    " NCS Security Version",          // 2
+    " NCS Security Version",          // 3
+    " NCS Security Version",          // 4
+    " NCS Security Version",          // 5
+    " NCS Security Version",          // 6
+    " NCS Security Version",          // 7
+    " NCS Security Version",          // 8
+    " NCS Security Version",          // 9
+    " NCS Security Version",          // 10
+    " NCS Security Version",          // 11
+    " NCS Security Version",          // 12
+    " NCS Security Version",          // 13
+    " NCS Security Version",          // 14
+    "Undefined / Reserved / MAX",     // 15
+];
+
+// RFC 4122 (Leach-Salz) (variant 2)
+const UUID_VAR2_VERSIONS = [
+    "Undefined / Reserved / NIL",     // 0
+    "Gregorian Unordered Timestamp",  // 1
+    "DCE Security (POSIX)",           // 2
+    "Name-Based (MD5 Hash)",          // 3
+    "Random-Based Number",            // 4
+    "Name Based (SHA-1 Hash)",        // 5
+    "Gregorian Ordered Timestamp",    // 6
+    "Unix Epoch Timestamp",           // 7
+    "Custom Encoding Format",         // 8
+    "Reserved for future defnition",  // 9
+    "Reserved for future defnition",  // 10
+    "Reserved for future defnition",  // 11
+    "Reserved for future defnition",  // 12
+    "Reserved for future defnition",  // 13
+    "Reserved for future defnition",  // 14
+    "Undefined / Reserved / MAX",     // 15
+];
+
+// Microsoft GUIDs (variant 3)
+const UUID_VAR3_VERSIONS = [
+    "Undefined / Reserved / NIL",     // 0
+    "Microsoft GUID Version 1",       // 1
+    "Microsoft GUID Version 2",       // 2
+    "Microsoft GUID Version 3",       // 3
+    "Microsoft GUID Version 4",       // 4
+    "Microsoft GUID Version 5",       // 5
+    "Microsoft GUID Version 6",       // 6
+    "Microsoft GUID Version 7",       // 7
+    "Microsoft GUID Version 8",       // 8
+    "Microsoft GUID Version 9",       // 9
+    "Microsoft GUID Version 10",      // 10
+    "Microsoft GUID Version 11",      // 11
+    "Microsoft GUID Version 12",      // 12
+    "Microsoft GUID Version 13",      // 13
+    "Microsoft GUID Version 14",      // 14
+    "Undefined / Reserved / MAX",     // 15
+];
 
 /**
  * @namespace mcode
@@ -420,81 +565,9 @@ const mcode = {
      */
     httpStatus: function (httpCode)
     {
-        const httpResponse =
-        {
-            "100": "Continue",
-            "101": "Switching Protocols",
-            "102": "Processing",
-            "103": "Early Hints",
-
-            "200": "OK",
-            "201": "Created",
-            "202": "Accepted",
-            "203": "Non-Authoritative Information",
-            "204": "No Content",
-            "205": "Reset Content",
-            "206": "Partial Content",
-            "207": "Multi-Status",
-            "208": "Already Reported",
-            "226": "IM Used",
-
-            "300": "Multiple Choices",
-            "301": "Moved Permanently",
-            "302": "Found",
-            "303": "See Other",
-            "304": "Not Modified",
-            "305": "Use Proxy",
-            "307": "Temporary Redirect",
-            "308": "Permanent Redirect",
-
-            "400": "Bad Request",
-            "401": "Unauthorized",
-            "402": "Payment Required",
-            "403": "Forbidden",
-            "404": "Not Found",
-            "405": "Method Not Allowed",
-            "406": "Not Acceptable",
-            "407": "Proxy Authentication Required",
-            "408": "Request Timeout",
-            "409": "Conflict",
-            "410": "Gone",
-            "411": "Length Required",
-            "412": "Precondition Failed",
-            "413": "Payload Too Large",
-            "414": "URI Too Long",
-            "415": "Unsupported Media Type",
-            "416": "Range Not Satisfiable",
-            "417": "Expectation Failed",
-            "418": "I'm a Teapot", // indicates that the server refuses to brew coffee because it is a teapot. (An April fool’s joke from 1998)
-            "421": "Misdirected Request",
-            "422": "Unprocessable Entity",
-            "423": "Locked",
-            "424": "Failed Dependency",
-            "425": "Too Early",
-            "426": "Upgrade Required",
-            "428": "Precondition Required",
-            "429": "Too Many Requests",
-            "431": "Request Header Fields Too Large",
-            "444": "Connection Closed Without Response",
-            "451": "Unavailable For Legal Reasons",
-
-            "500": "Internal Server Error",
-            "501": "Not Implemented",
-            "502": "Bad Gateway",
-            "503": "Service Unavailable",
-            "504": "Gateway Timeout",
-            "505": "HTTP Version Not Supported",
-            "506": "Variant Also Negotiates",
-            "507": "Insufficient Storage",
-            "508": "Loop Detected",
-            "509": "Bandwidth Limit Exceeded",
-            "510": "Not Extended",
-            "511": "Network Authentication Required"
-        };
-
         // return the translated HTTP status code
         // example: `[HTTP] 404: Not Found`
-        return (`[HTTP] ${httpCode}: ` + httpResponse[httpCode] || 'Unknown HTTP Status');
+        return (`[HTTP] ${httpCode}: ` + HTTP_CODES[httpCode] || 'Unknown HTTP Status');
     },
 
     /**
@@ -507,77 +580,6 @@ const mcode = {
      */
     uuidDecode: function (uuid, localTime = false)
     {
-        // V A R I A N T S
-
-        const variants = [
-            "NCS compatibility",
-            "NCS compatibility",
-            "RFC 4122, RFC 9562",
-            "Microsoft GUIDs",
-        ];
-
-        // V E R S I O N S
-
-        // NCS compatibility (variant 0, 1)
-        const var1versions = [
-            "Undefined / Reserved / NIL",     // 0
-            " NCS Security Version",          // 1
-            " NCS Security Version",          // 2
-            " NCS Security Version",          // 3
-            " NCS Security Version",          // 4
-            " NCS Security Version",          // 5
-            " NCS Security Version",          // 6
-            " NCS Security Version",          // 7
-            " NCS Security Version",          // 8
-            " NCS Security Version",          // 9
-            " NCS Security Version",          // 10
-            " NCS Security Version",          // 11
-            " NCS Security Version",          // 12
-            " NCS Security Version",          // 13
-            " NCS Security Version",          // 14
-            "Undefined / Reserved / MAX",     // 15
-        ];
-
-        // RFC 4122 (Leach-Salz) (variant 2)
-        const var2versions = [
-            "Undefined / Reserved / NIL",     // 0
-            "Gregorian Unordered Timestamp",  // 1
-            "DCE Security (POSIX)",           // 2
-            "Name-Based (MD5 Hash)",          // 3
-            "Random-Based Number",            // 4
-            "Name Based (SHA-1 Hash)",        // 5
-            "Gregorian Ordered Timestamp",    // 6
-            "Unix Epoch Timestamp",           // 7
-            "Custom Encoding Format",         // 8
-            "Reserved for future defnition",  // 9
-            "Reserved for future defnition",  // 10
-            "Reserved for future defnition",  // 11
-            "Reserved for future defnition",  // 12
-            "Reserved for future defnition",  // 13
-            "Reserved for future defnition",  // 14
-            "Undefined / Reserved / MAX",     // 15
-        ];
-
-        // Microsoft GUIDs (variant 3)
-        const var3versions = [
-            "Undefined / Reserved / NIL",     // 0
-            "Microsoft GUID Version 1",       // 1
-            "Microsoft GUID Version 2",       // 2
-            "Microsoft GUID Version 3",       // 3
-            "Microsoft GUID Version 4",       // 4
-            "Microsoft GUID Version 5",       // 5
-            "Microsoft GUID Version 6",       // 6
-            "Microsoft GUID Version 7",       // 7
-            "Microsoft GUID Version 8",       // 8
-            "Microsoft GUID Version 9",       // 9
-            "Microsoft GUID Version 10",      // 10
-            "Microsoft GUID Version 11",      // 11
-            "Microsoft GUID Version 12",      // 12
-            "Microsoft GUID Version 13",      // 13
-            "Microsoft GUID Version 14",      // 14
-            "Undefined / Reserved / MAX",     // 15
-        ];
-
         // L I S T S - by UUID Variant and their Versions
 
         // ƒ Table of UUID Variants
@@ -653,21 +655,21 @@ const mcode = {
         // ƒ UUID Variant #0 and #1 - NCS compatibility
         function uuidvar1()
         {
-            versionText = var1versions[version];
+            versionText = UUID_VAR1_VERSIONS[version];
             return uuidvar1Layouts[version]();
         }
 
         // ƒ UUID Variant #2 - RFC 4122 (Leach-Salz)
         function uuidvar2()
         {
-            versionText = var2versions[version];
+            versionText = UUID_VAR2_VERSIONS[version];
             return uuidvar2Layouts[version]();
         }
 
         // ƒ UUID Variant #3 - Microsoft GUIDs
         function uuidvar3()
         {
-            versionText = var3versions[version];
+            versionText = UUID_VAR3_VERSIONS[version];
             return uuidvar3Layouts[version]();
         }
 
@@ -1457,7 +1459,7 @@ const mcode = {
         const part_c = `${part_c2}${part_c1}${part_c0}`;
 
         // How to interpret the UUID...
-        const variantText = variants[variant];
+        const variantText = UUID_VARIANTS[variant];
         let versionText = '<undetermined>';
         let variantValue1Name = 'part_a1';
         let variantValue1 = part_a1;
