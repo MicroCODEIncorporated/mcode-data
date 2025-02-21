@@ -148,6 +148,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* 0.5.9
+    - Minor optimizations.
 * v0.5.8
     - Updated 'httpStatus()' to use a STATIC copy of HTTP codes list for speed.
     - Updated 'uuidDecode()' to use all STATIC text lists for speed.

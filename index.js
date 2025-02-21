@@ -375,7 +375,7 @@ const mcode = {
      */
     isUndefined: function (objectToCheck)
     {
-        // return true if 'objectToCheck' is UNDEFINED
+        // return true if 'objectToCheck' is UNDEFINED or NULL
         return ((typeof objectToCheck === 'undefined') || (objectToCheck === null));
     },
 
@@ -560,7 +560,7 @@ const mcode = {
      * @func httpStatus
      * @memberof mcode
      * @desc Returns the text for a given HTTP status code.
-     * @param {object} httpCode the HTTP status code to translate.
+     * @param {var} httpCode the HTTP status code to translate.
      * @returns {string} a value representing the English meaning of a HTTP status code, formatted for display.
      */
     httpStatus: function (httpCode)
