@@ -79,10 +79,11 @@ These are the functions we want at the ready in any module for development and d
 | **isJson**       | Checks the type of an Object for JSON.                    | mcode.isJson('JSON text' or objectName)                |
 | **isDate**       | Checks the type of an Object for DATE.                    | mcode.isDate(timestamp)                                |
 | **isTimeStamp**  | Checks the type of an Object for TIME STAMP.              | mcode.isTimeStamp(timestamp)                           |
+| **default**      | Returns a default value if an 'item' is 'blank'.          | mcode.default(value, default)                          |
 | Type Conversions |                                                           |
 | **octify**       | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                          |
 | **hexify**       | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                          |
-| **extractId**    | Extracts the first alpha-numberic ID Field from a string. | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K") |
+| **extractId**    | Extracts the first alpha-numeric ID Field from a string.  | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K") |
 | **fromSnakeCase**| Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string") |
 | **toSnakeCase**  | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String") |
 | HTTP Support     |                                                           |
@@ -148,13 +149,18 @@ Contributor's names and contact info...
 
 ## Version History
 
-* 0.5.9
+* v0.6.0
+    - Added more standardized JSDoc module headers for inclusion in end-product documentation.
+* v0.5.10
+    - Added 'default(anyItem, defaultItem)' function. It returns the defaultItem if anyItem is 'blank',
+      meaning null, undefined, or an 'empty' copy of the type.
+* v0.5.9
     - Minor optimizations.
 * v0.5.8
     - Updated 'httpStatus()' to use a STATIC copy of HTTP codes list for speed.
     - Updated 'uuidDecode()' to use all STATIC text lists for speed.
 * v0.5.7
-    - Corrected cross-spawn  7.0.0 - 7.0.4; Severity: high; Regular Expression Denial of Service.
+    - Corrected cross-spawn  v7.0.0 - 7.0.4; Severity: high; Regular Expression Denial of Service.
 * v0.5.6
     - Updated 'uuidDecode()' to return the NIL UUID for a missing UUID parameter.
 * v0.5.5

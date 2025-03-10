@@ -1,17 +1,19 @@
 // #region  F I L E
 // <copyright file="mcode-data/index.js" company="MicroCODE Incorporated">Copyright © 2022-2024 MicroCODE, Inc. Troy, MI</copyright><author>Timothy J. McGuire</author>
 // #region  M O D U L E
-
 // #region  D O C U M E N T A T I O N
-/*
- *      Title:    MicroCODE Shared Data Handling Library
- *      Module:   modules (node_modules/mcode-data/index.js)
+/**
  *      Project:  MicroCODE MERN Applications
- *      Customer: Internal+MIT xPRO Course
- *      Creator:  MicroCODE Incorporated
- *      Date:     January 2022-2024
- *      Author:   Timothy McGuire
+ *      Customer: Internal + MIT xPRO Course
+ *      @module   'mcode-data.js'
+ *      @memberof mcode
+ *      @created  January 2022-2024
+ *      @author   Timothy McGuire, MicroCODE, Inc.
+ *      @description >
+ *      MicroCODE Common Data Utitlities
  *
+ *      LICENSE:
+ *      --------
  *      MIT License: MicroCODE.mcode-data
  *
  *      Copyright (c) 2022-2025 Timothy McGuire, MicroCODE, Inc.
@@ -37,14 +39,12 @@
  *
  *      DESCRIPTION:
  *      ------------
- *
  *      This module implements the MicroCODE's Common JavaScript functions for data handling.
  *
  *
  *      REFERENCES:
  *      -----------
- *
- *      1. MIT xPRO Course: Professional Certificate in Coding: Full Stack Development with MERN
+ *      1. MIT xPRO Course: Professional Certificate in Coding: Full Stack Development with MERN.
  *
  *      2. LADDERS® source code: MACRO-11, MACRO-32, C#, and JavaScript.
  *
@@ -53,24 +53,23 @@
  *
  *      MODIFICATIONS:
  *      --------------
+ *      Date:         By-Group:   Rev:    Description:
  *
- *  Date:         By-Group:   Rev:    Description:
- *
- *  30-Jan-2024   TJM-MCODE  {0001}   New module for common reusable JavaScript data handling functions.
- *  01-Feb-2024   TJM-MCODE  {0002}   Changed to the Universal Module Definition (UMD) pattern to support AMD,
- *                                    CommonJS/Node.js, and browser global in our exported module.
- *  01-Feb-2024   TJM-MCODE  {0003}   Swap() and Call() now throw an error if the 'keys' and 'values' lists are not the same length,
- *                                    instead of looging the error and returning a default value.
- *  22-Aug-2024   TJM-MCODE  {0004}   Corrected isJson() to rely on 1st character being '{' to determine JSON string
- *                                    it was returning true for any string that contained a '{' character,
- *                                    this was signaling 'true' for HTMX templates that contained '{{variable}}'.
- *  05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
- *  19-Feb-2025   TJM-MCODE  {0006}   0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
- *                                           - updated all UUID string lists to STATIC as well.
- *
+ *      30-Jan-2024   TJM-MCODE  {0001}   New module for common reusable JavaScript data handling functions.
+ *      01-Feb-2024   TJM-MCODE  {0002}   Changed to the Universal Module Definition (UMD) pattern to support AMD,
+ *                                        CommonJS/Node.js, and browser global in our exported module.
+ *      01-Feb-2024   TJM-MCODE  {0003}   Swap() and Call() now throw an error if the 'keys' and 'values' lists are not the same length,
+ *                                        instead of logging the error and returning a default value.
+ *      22-Aug-2024   TJM-MCODE  {0004}   Corrected isJson() to rely on 1st character being '{' to determine JSON string
+ *                                        it was returning true for any string that contained a '{' character,
+ *                                        this was signaling 'true' for HTMX templates that contained '{{variable}}'.
+ *      05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
+ *      19-Feb-2025   TJM-MCODE  {0006}   0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
+ *                                               - updated all UUID string lists to STATIC as well.
  *
  *
- * NOTE: This module follow's MicroCODE's JavaScript Style Guide and Template JS file, see:
+ *
+ * NOTE: This module follows MicroCODE's JavaScript Style Guide and Template JS file, see:
  *
  *       o  https://github.com/MicroCODEIncorporated/JavaScriptSG
  *       o  https://github.com/MicroCODEIncorporated/TemplatesJS
@@ -446,44 +445,108 @@ const mcode = {
     },
 
     /**
+     * @func default
+     * @memberof mcode
+     * @desc Evaluates a param and returns a default if the param is null, undefined,
+     * or empty (strings, arrays, objects, or primitives).
+     * @api public
+     * @param {any} anyItem The JavaScript entity being tested.
+     * @param {any} defaultItem The item to be returned if 'anyItem' is null, undefined, or empty.
+     * @returns {any} The original item or the default if empty/null/undefined.
+     * @example
+     *           err = mcode.default(err, 'Undefined error occurred');  // default to recognizable message
+     *           data = mcode.default(data, []); // Default to empty array
+     *           config = mcode.default(config, {}); // Default to empty object
+     *           count = mcode.default(count, 1); // Default to 1 if count is 0
+     *
+     *           log(mcode.default(undefined, 'Default'));   // 'Default'
+     *           log(mcode.default(null, 'Default'));        // 'Default'
+     *           log(mcode.default('', 'Default'));          // 'Default'
+     *           log(mcode.default(0, 1));                   // 1 (0 is 'empty', returns default)
+     *           log(mcode.default(42, 1));                  // 42 (non-zero number, returns original)
+     *           log(mcode.default([], []));                 // []
+     *           log(mcode.default(['item'], ['default']));  // ['item']
+     *           log(mcode.default({}, {}));                 // {}
+     *           log(mcode.default({ key: 'value' }, { def: 'default' }));
+     *                                                              // { key: 'value' }
+     *           log(mcode.default(true, false));            // true
+     *           log(mcode.default('Hello', 'Default'));     // 'Hello'
+     */
+    default(anyItem, defaultItem)
+    {
+        // handle null, undefined, or empty values
+        if (anyItem === null || anyItem === undefined)
+        {
+            return defaultItem;
+        }
+
+        // handle empty strings
+        if (typeof anyItem === 'string' && anyItem === '')
+        {
+            return defaultItem;
+        }
+
+        // handle unassigned values (0 is treated as 'unassigned')
+        if (typeof anyItem === 'number' && anyItem === 0)
+        {
+            return defaultItem;
+        }
+
+        // handle empty arrays
+        if (Array.isArray(anyItem) && anyItem.length === 0)
+        {
+            return defaultItem;
+        }
+
+        // Handle empty objects (excluding null prototypes or non-object types)
+        if (typeof anyItem === 'object' && anyItem !== null && Object.keys(anyItem).length === 0)
+        {
+            return defaultItem;
+        }
+
+        // return the original item for all other cases (primitives, non-empty arrays/objects, etc.)
+        return anyItem;
+    },
+
+    /**
      * @func extractId
      * @memberof mcode
      * @desc Extracts an alpha-numberic ID Field from a string, intended to be a unique portion of a common string.
      * @param {string} objectName typically a file name, but can be any string, to extract an ID Field from.
      * @returns {string} the extracted ID Field.
      *
+     * @example
+    *
      *  Rules for extracting the ID Field:
-     *  ----------------------------------
+     *
      *  1. The ID Field is assumed to be the first alpha-numeric field in the string.
      *  2. The ID Field is assumed to be Letters + Numbers, with no spaces or special characters.
      *  3. The ID Field is assumed to be either at the beginning or end of the string, or separated by non-alpha-numeric characters.
-     *  4. The ID Field cound have lowercase 'placeholders' for numbers, like 'PxCy' or 'PnCn' for 'P1C2'.
-     *
-     * @example
+     *  4. The ID Field could have lowercase 'placeholders' for numbers, like 'PxCy' or 'PnCn' for 'P1C2'.
      *
      * const str1 = "CG_BRKE01_20231116.L5K";
      * const str2 = "CG_BRKE03_20231116.L5K";
      *
-     * console.log(extractIdField(str1)); // Expected output: "BRKE01"
-     * console.log(extractIdField(str2)); // Expected output: "BRKE03"
+     *  log(extractIdField(str1));     // Expected output: "BRKE01"
+     *  log(extractIdField(str2));     // Expected output: "BRKE03"
      *
      * const str1 = "EP_GPT13TZ1_20231115_0800.L5K";
      * const str2 = "EP_GPT13TZ2_20231113_1600.L5K";
      *
-     * console.log(extractIdField(str1)); // Expected output: "GPT13TZ1"
-     * console.log(extractIdField(str2)); // Expected output: "GPT13TZ2"
+     *  log(extractIdField(str1));     // Expected output: "GPT13TZ1"
+     *  log(extractIdField(str2));     // Expected output: "GPT13TZ2"
      *
      * const str1 = "SEP_P1C2_GMP_ARL.L5K";
      * const str2 = "SEP_P3C0_GMP_ARL.L5K";
      *
-     * console.log(extractIdField(str1)); // Expected output: "P1C2"
-     * console.log(extractIdField(str2)); // Expected output: "P3C0"
+     *  log(extractIdField(str1));     // Expected output: "P1C2"
+     *  log(extractIdField(str2));     // Expected output: "P3C0"
      *
      * const str1 = "SEP_P1C2_GMP_ARL.L5K";
      * const str2 = "SEP_PxCy_GMP.L5K";
      *
-     * console.log(extractIdField(str1)); // Expected output: "P1C2"
-     * console.log(extractIdField(str2)); // Expected output: "PxCy"
+     *  log(extractIdField(str1));     // Expected output: "P1C2"
+     *  log(extractIdField(str2));     // Expected output: "PxCy"
      *
      *
      */
