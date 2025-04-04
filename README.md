@@ -69,6 +69,8 @@ These are the functions we want at the ready in any module for development and d
 
 | Function         | Description                                               | Usage                                                  |
 | ---------------- | --------------------------------------------------------- | ------------------------------------------------------ |
+| Properties       |                                                           |
+| **property**     | Creates a property .set, .get, .validate, and .onchange.  | mcode.property(options)                                 |
 | Type Checking    |                                                           |
 | **isString**     | Checks the type of an Object for String.                  | mcode.isString('stringToTest')                         |
 | **isObject**     | Checks the type of an Object for Object.                  | mcode.isObject(objectName)                             |
