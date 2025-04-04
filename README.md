@@ -149,6 +149,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+* v0.6.1
+    - Added 'property(options)' to create a property with get, set methods, validator, and on change events.
 * v0.6.0
     - Added more standardized JSDoc module headers for inclusion in end-product documentation.
 * v0.5.10

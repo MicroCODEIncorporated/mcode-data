@@ -246,6 +246,80 @@ const UUID_VAR3_VERSIONS = [
 const mcode = {
 
     /**
+     * @func property
+     * @memberof mcode
+     * @desc Creates a property with get, set methods, validator, and on change events.
+     * @api public
+     * @param {object} options optional params to define the property
+     * {initial: value, readonly: boolean, immutable: boolean, validator: function, onChange: function}.
+     * @returns {object} a property object with get, set, type, reset, isReadOnly, and isImmutable methods.
+     */
+    property: function (options = {})
+    {
+        // internal variables
+        const _initial = options?.initial;
+        const _readonly = options.readonly || false;
+        const _immutable = options.immutable || false;
+
+        // optional functions
+        const _validator = options.validator || function () {return true;};
+        const _onChange = options.onChange || function () {};
+
+        // the actual value of the property
+        let _value = options.initial || undefined;
+
+        return {
+            get: function ()
+            {
+                return _value;
+            },
+            set: function (value)
+            {
+                if (_immutable && (_value !== undefined))
+                {
+                    throw new Error('｢mcode.property｣ This property is immutable.');
+                }
+                if (_readonly)
+                {
+                    throw new Error('｢mcode.property｣ This property is read-only.');
+                }
+                if (_validator(value))
+                {
+                    const _last = _value;
+                    _value = value;
+                    _onChange(_last, _value);
+                }
+                else
+                {
+                    throw new Error('｢mcode.property｣ Invalid property value.');
+                }
+            },
+            type: function ()
+            {
+                return typeof _value;
+            },
+            reset: function ()
+            {
+                const _last = _value;
+                _value = _initial;
+                _onChange(_last, _value);
+            },
+            isReadOnly: function ()
+            {
+                return _readonly;
+            },
+            isImmutable: function ()
+            {
+                return _immutable;
+            },
+            hasChanged: function ()
+            {
+                return _value !== _initial;
+            }
+        };
+    },
+
+    /**
      * @func isString
      * @memberof mcode
      * @desc Checks whether or not a object is a JS String.

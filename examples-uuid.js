@@ -1,5 +1,5 @@
-// MicroCODE: define this module's name for  our 'list-log' package
-const MODULE_NAME = 'examples.js';
+// MicroCODE: define this module's name for logging
+const MODULE_NAME = 'examples-uudi.js';
 const data = require('./index.js');
 
 let uuid;
