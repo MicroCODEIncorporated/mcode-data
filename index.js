@@ -66,6 +66,8 @@
  *      05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
  *      19-Feb-2025   TJM-MCODE  {0006}   0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
  *                                               - updated all UUID string lists to STATIC as well.
+ *      17-Apr-2025   TJM-MCODE  {0007}   0.5.09 - added 'isHtml()' function to check if a string is HTML,
+ *                                                 updated 'isJson()' to use same check.
  *
  *
  *
@@ -98,14 +100,20 @@ const MODULE_NAME = 'mcode-data.js';
 // Static copy of HTTP codes for httpStatus() function for speed - {0006}
 const HTTP_CODES =
 {
+    //1xx: Informational responses (CYAN)
     "100": "Continue",
     "101": "Switching Protocols",
     "102": "Processing",
     "103": "Early Hints",
+    "104": "Checkpoint (WebDAV)",
+    "105": "Switch Proxy (WebDAV)",
+    "106": "Processing (WebDAV)",
+    "107": "Handoff (WebDAV)",
 
-    "200": "OK",
-    "201": "Created",
-    "202": "Accepted",
+    //2xx: Success responses (GREEN)
+    "200": "OK",  // for READ
+    "201": "Created",  //for CREATE
+    "202": "Accepted",  // for PUT/PATCH/DELETE
     "203": "Non-Authoritative Information",
     "204": "No Content",
     "205": "Reset Content",
@@ -114,6 +122,7 @@ const HTTP_CODES =
     "208": "Already Reported",
     "226": "IM Used",
 
+    //3xx: Redirection responses (YELLOW)
     "300": "Multiple Choices",
     "301": "Moved Permanently",
     "302": "Found",
@@ -122,12 +131,15 @@ const HTTP_CODES =
     "305": "Use Proxy",
     "307": "Temporary Redirect",
     "308": "Permanent Redirect",
+    "309": "Resume Incomplete (WebDAV)",
+    "310": "Too Many Redirects",
 
-    "400": "Bad Request",
+    //4xx: Client error responses (RED)
+    "400": "Bad Request",  // missing Record Fields during CREATE or PUT
     "401": "Unauthorized",
     "402": "Payment Required",
     "403": "Forbidden",
-    "404": "Not Found",
+    "404": "Not Found",  // no record to update during PATCH or PUT
     "405": "Method Not Allowed",
     "406": "Not Acceptable",
     "407": "Proxy Authentication Required",
@@ -142,6 +154,7 @@ const HTTP_CODES =
     "416": "Range Not Satisfiable",
     "417": "Expectation Failed",
     "418": "I'm a Teapot", // indicates that the server refuses to brew coffee because it is a teapot. (An April fool’s joke from 1998)
+    "419": "Page Expired (Laravel)",
     "421": "Misdirected Request",
     "422": "Unprocessable Entity",
     "423": "Locked",
@@ -151,11 +164,16 @@ const HTTP_CODES =
     "428": "Precondition Required",
     "429": "Too Many Requests",
     "431": "Request Header Fields Too Large",
-    "444": "Connection Closed Without Response",
+    "440": "Login Timeout (Microsoft)",
+    "444": "Connection Closed Without Response (NGINX)",
+    "449": "Retry With (Microsoft - IIS specific)",
+    "450": "Blocked by Windows Parental Controls (Microsoft)",
     "451": "Unavailable For Legal Reasons",
+    "499": "Client Closed Request (NGINX)",
 
-    "500": "Internal Server Error",
-    "501": "Not Implemented",
+    //5xx: Server error responses (MAGENTA)
+    "500": "Internal Server Error",  // unexpected Code Exceptions
+    "501": "Not Implemented",  // hit stubs or calls to non-existent endpoints
     "502": "Bad Gateway",
     "503": "Service Unavailable",
     "504": "Gateway Timeout",
@@ -163,9 +181,20 @@ const HTTP_CODES =
     "506": "Variant Also Negotiates",
     "507": "Insufficient Storage",
     "508": "Loop Detected",
-    "509": "Bandwidth Limit Exceeded",
+    "509": "Bandwidth Limit Exceeded (Apache/cPanel)",
     "510": "Not Extended",
-    "511": "Network Authentication Required"
+    "511": "Network Authentication Required",
+    "520": "Unknown Error (Cloudflare)",
+    "521": "Web Server Is Down (Cloudflare)",
+    "522": "Connection Timed Out (Cloudflare)",
+    "523": "Origin Is Unreachable (Cloudflare)",
+    "524": "A Timeout Occurred (Cloudflare)",
+    "525": "SSL Handshake Failed (Cloudflare)",
+    "526": "Invalid SSL Certificate (Cloudflare)",
+    "527": "Railgun Error (Cloudflare)",
+    "530": "Origin DNS Error (Cloudflare-FTP)",
+    "598": "Network Read Timeout Error (Unofficial)",
+    "599": "Network Connect Timeout Error (Azure/AWS)",
 };
 
 // U U I D - V A R I A N T S
@@ -408,7 +437,7 @@ const mcode = {
     /**
      * @func isJson
      * @memberof mcode
-     * @desc Checks a string for embedded JSON data.
+     * @desc Quickly checks a string for embedded JSON data.
      * @api public
      * @param {object} object string to be tested
      * @returns {boolean} a value indicating whether or not the object is a JSON string.
@@ -417,24 +446,41 @@ const mcode = {
     {
         try
         {
-            if (typeof object !== 'string')
-            {
-                return false;
-            }
+            if (typeof object !== 'string') return false;
 
-            // if the very first character is '{' then it's probably JSON
-            if (object.startsWith('{'))
-            {
-                return true;  // treat as JSON -- JSON.parse() is overkill here
-            }
-            else
-            {
-                return false; // *not* JSON
-            }
+            // if this string begins with '{' and ends with '}' its very likely legal JSON code
+            const trimmed = object.trim();
+
+            return trimmed.startsWith('{') && trimmed.endsWith('}');
         }
         catch
         {
             return false;  // *not* JSON and not parsable
+        }
+    },
+
+    /**
+     * @func isHtml
+     * @memberof mcode
+     * @desc Quickly checks a string for HTML content.
+     * @api public
+     * @param {object} object string to be tested
+     * @returns {boolean} a value indicating whether or not the object is HTML string.
+     */
+    isHtml: function (object)
+    {
+        try
+        {
+            if (typeof object !== 'string') return false;
+
+            // if this string begins with '<' and ends with '>' its very likely legal HTML code
+            const trimmed = object.trim();
+
+            return trimmed.startsWith('<') && trimmed.endsWith('>');
+        }
+        catch
+        {
+            return false;  // *not* HTML and not parsable
         }
     },
 
@@ -622,7 +668,6 @@ const mcode = {
      *  log(extractIdField(str1));     // Expected output: "P1C2"
      *  log(extractIdField(str2));     // Expected output: "PxCy"
      *
-     *
      */
     extractId: function (objectName)
     {
@@ -705,6 +750,38 @@ const mcode = {
         // return the translated HTTP status code
         // example: `[HTTP] 404: Not Found`
         return (`[HTTP] ${httpCode}: ` + HTTP_CODES[httpCode] || 'Unknown HTTP Status');
+    },
+
+    /**
+     * @func httpSeverity
+     * @memberof mcode
+     * @desc Returns the mcode.log() severity (as text) for a given HTTP status code.
+     * @param {var} httpCode the HTTP status code to translate.
+     * @returns {string} a value representing the text name for logging the proper severity.
+     */
+    httpSeverity: function (httpCode)
+    {
+        if (httpCode >= 500)
+        {
+            return 'fatal';  // these severity must match mcode.log() definitions and app-banner.module.css
+        }
+        else if (httpCode >= 400)
+        {
+            return 'error';
+        }
+        else if (httpCode >= 300)
+        {
+            return 'warning';
+        }
+        else if (httpCode >= 200)
+        {
+            return 'success';
+        }
+        else if (httpCode >= 100)
+        {
+            return 'info';
+        }
+        return 'none';
     },
 
     /**
@@ -1011,6 +1088,7 @@ const mcode = {
                 multicast: multicast,
                 multicastText: multicastText,
                 node: node,
+                macid: nodeValue
             };
         }
 

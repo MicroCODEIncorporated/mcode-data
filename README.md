@@ -6,8 +6,8 @@ This is an extremely 'light weight' package with _zero dependencies_.
 
 Identical data and math handling on both...
 
--   **Frontend** - in the Browser UI
--   **Backend** - in the Server MVC
+- **Frontend** - in the Browser UI
+- **Backend** - in the Server MVC
 
 ## Description
 
@@ -19,11 +19,11 @@ This is our own internal data processing (data) code. It is used to gain more co
 
 ## Dependencies
 
--   **Production**
+- **Production**
 
 1. None
 
--   **Development**
+- **Development**
 
 1. Node.JS - standard runtime environment
 2. JSDocs - our preferred JavaScript documentation system
@@ -35,8 +35,8 @@ When building a large application its important that the entire team agreed to c
 
 ### Installing
 
--   Get to a terminal session in the local repo folder of your project.
--   Use 'npm install' to load the package. It can be used 'stand-alone'...
+- Get to a terminal session in the local repo folder of your project.
+- Use 'npm install' to load the package. It can be used 'stand-alone'...
 
 ```
 npm install mcode-data
@@ -47,7 +47,7 @@ npm install mcode-data
 This package includes a simple demo module: **examples.js**.
 Running it directly will show you a set of examples for using all the data library functions.
 
--   From your project directory after installation...
+- From your project directory after installation...
 
 ```
 node .\node_modules\mcode-data\examples
@@ -55,8 +55,8 @@ node .\node_modules\mcode-data\examples
 
 ...this will deomnstrate thru console logging various uses of the mcode-data functions.
 
--   To test with **JEST**:
--   From the **mcode-data** package directory...
+- To test with **JEST**:
+- From the **mcode-data** package directory...
 
 ```
 npm install --save-dev jest
@@ -67,31 +67,33 @@ npm test
 
 These are the functions we want at the ready in any module for development and debug.
 
-| Function         | Description                                               | Usage                                                  |
-| ---------------- | --------------------------------------------------------- | ------------------------------------------------------ |
-| Properties       |                                                           |
-| **property**     | Creates a property .set, .get, .validate, and .onchange.  | mcode.property(options)                                 |
-| Type Checking    |                                                           |
-| **isString**     | Checks the type of an Object for String.                  | mcode.isString('stringToTest')                         |
-| **isObject**     | Checks the type of an Object for Object.                  | mcode.isObject(objectName)                             |
-| **isArray**      | Checks the type of an Object for Array.                   | mcode.isArray(arrayName)                               |
-| **isFunction**   | Checks the type of an Object for Function.                | mcode.isFunction(objectName)                           |
-| **isNumber**     | Checks the type of an Object for Number.                  | mcode.isNumber(102022 or numberName)                   |
-| **isNaN**        | Checks the type of an Object for NaN.                     | mcode.isNaN(numberName)                                |
-| **isJson**       | Checks the type of an Object for JSON.                    | mcode.isJson('JSON text' or objectName)                |
-| **isDate**       | Checks the type of an Object for DATE.                    | mcode.isDate(timestamp)                                |
-| **isTimeStamp**  | Checks the type of an Object for TIME STAMP.              | mcode.isTimeStamp(timestamp)                           |
-| **default**      | Returns a default value if an 'item' is 'blank'.          | mcode.default(value, default)                          |
-| Type Conversions |                                                           |
-| **octify**       | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                          |
-| **hexify**       | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                          |
-| **extractId**    | Extracts the first alpha-numeric ID Field from a string.  | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K") |
-| **fromSnakeCase**| Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string") |
-| **toSnakeCase**  | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String") |
-| HTTP Support     |                                                           |
-| **httpStatus**   | Converts a http status code into a message.               | mcode.httpStatus(code)                          |
-| UUID Support     |                                                           |
-| **uuidDecode**   | Decodes a UUID string into a JSON object.                 | mcode.uuidDecode('LLLLLLLL-MMMM-vHHH-VSSS-CNNNNNNNNNNN')                          |
+| Function          | Description                                               | Usage                                                    |
+| ----------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| Properties        |                                                           |                                                          |
+| **property**      | Creates a property .set, .get, .validate, and .onchange.  | mcode.property(options)                                  |
+| Type Checking     |                                                           |                                                          |
+| **isString**      | Checks the type of an Object for String.                  | mcode.isString('stringToTest')                           |
+| **isObject**      | Checks the type of an Object for Object.                  | mcode.isObject(objectName)                               |
+| **isArray**       | Checks the type of an Object for Array.                   | mcode.isArray(arrayName)                                 |
+| **isFunction**    | Checks the type of an Object for Function.                | mcode.isFunction(objectName)                             |
+| **isNumber**      | Checks the type of an Object for Number.                  | mcode.isNumber(102022 or numberName)                     |
+| **isNaN**         | Checks the type of an Object for NaN.                     | mcode.isNaN(numberName)                                  |
+| **isJson**        | Checks the type of an Object for JSON.                    | mcode.isJson('{'JSON text'}' or objectName)              |
+| **isHtml**        | Checks the type of an Object for HTML.                    | mcode.isHtml('<'HTML text'>' or objectName)              |
+| **isDate**        | Checks the type of an Object for DATE.                    | mcode.isDate(timestamp)                                  |
+| **isTimeStamp**   | Checks the type of an Object for TIME STAMP.              | mcode.isTimeStamp(timestamp)                             |
+| **default**       | Returns a default value if an 'item' is 'blank'.          | mcode.default(value, default)                            |
+| Type Conversions  |                                                           |                                                          |
+| **octify**        | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                            |
+| **hexify**        | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                            |
+| **extractId**     | Extracts the first alpha-numeric ID Field from a string.  | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K")   |
+| **fromSnakeCase** | Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string")                 |
+| **toSnakeCase**   | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String")                   |
+| HTTP Support      |                                                           |                                                          |
+| **httpStatus**    | Converts a http status code into a message.               | mcode.httpStatus(code)                                   |
+| **httpSeverity**  | Converts a http status code into a log severity.          | mcode.httpSeverity(code)                                 |
+| UUID Support      |                                                           |                                                          |
+| **uuidDecode**    | Decodes a UUID string into a JSON object.                 | mcode.uuidDecode('LLLLLLLL-MMMM-vHHH-VSSS-CNNNNNNNNNNN') |
 
 ### Documentation
 
@@ -102,21 +104,21 @@ JSDocs is a standardized system for documenting functions and data structures th
 2. Intellisense popup documentation for the coder for every function.
 3. External 'reference manual' documentation for your entire code base, if used consistently.
 
--   This entire project--like all our projects--is documented with **JSDocs**.
+- This entire project--like all our projects--is documented with **JSDocs**.
 
--   To install JSDocs use, get to a terminal session in the project folder...
+- To install JSDocs use, get to a terminal session in the project folder...
 
 ```
 npm install --save-dev jsdoc
 ```
 
--   Configure JSDoc processing in...
+- Configure JSDoc processing in...
 
 ```
 jsdoc.json
 ```
 
--   To regenerate the JSDocs from all source code, use the following command (from the project root directory)...
+- To regenerate the JSDocs from all source code, use the following command (from the project root directory)...
 
 ```
 jsdoc -c .jsdoc.json
@@ -147,58 +149,62 @@ Contact Timothy McGuire, support@mcode.com.
 
 Contributor's names and contact info...
 
--   Timothy McGuire [@TimothyMcGuire](https://twitter.com/TimothyMcGuire) - Founder, President-CEO of MicroCODE, Inc. a software and controls engineering company in Detroit, Michigan USA.
+- Timothy McGuire [@TimothyMcGuire](https://twitter.com/TimothyMcGuire) - Founder, President-CEO of MicroCODE, Inc. a software and controls engineering company in Detroit, Michigan USA.
 
 ## Version History
 
-* v0.6.1
-    - Added 'property(options)' to create a property with get, set methods, validator, and on change events.
-* v0.6.0
-    - Added more standardized JSDoc module headers for inclusion in end-product documentation.
-* v0.5.10
-    - Added 'default(anyItem, defaultItem)' function. It returns the defaultItem if anyItem is 'blank',
-      meaning null, undefined, or an 'empty' copy of the type.
-* v0.5.9
-    - Minor optimizations.
-* v0.5.8
-    - Updated 'httpStatus()' to use a STATIC copy of HTTP codes list for speed.
-    - Updated 'uuidDecode()' to use all STATIC text lists for speed.
-* v0.5.7
-    - Corrected cross-spawn  v7.0.0 - 7.0.4; Severity: high; Regular Expression Denial of Service.
-* v0.5.6
-    - Updated 'uuidDecode()' to return the NIL UUID for a missing UUID parameter.
-* v0.5.5
-    - Minor reformatting of the 'httpStatus()' message to [BRACKET] the subsystem producing the message.
-* v0.5.4
-    - Corrected 'uuidDecode()' removed cnsole.log debug statement.
-* v0.5.3
-    - Corrected 'uuidDecode()' handling of timestamps in UUIDv6 and UUIDv7.
-* v0.5.2
-    - Added 'uuidDecode()' to display an immediate decoding of a UUID thru a JSON Object.
-* v0.5.1
-    - Added 'httpStatus()' for use in mcode.resx() - see mcode-log package.
-* v0.5.0
-    - All 'mcode-*' packages updated with 'ready()' only implemented in 'mcode-log'.
-* v0.4.3
-    - Corrected 'isJson()' to required the *1st* character be a '{', not any character.
-* v0.4.2
-    - Added 'fromSnakeCase()' and 'toSnakeCase()'.
-* v0.4.1
-    - Removed accidental dependency upon mcode-log.
-* v0.4.0
-    - Synchronized mcode-data, mcode-log, mcode-list, mcode-package.
-* v0.3.9
-    - Reorganization, all 'is' functions first.
-* v0.3.8
-    - Initial version, moved all data handling functions into new mcode-data package from mcode-log.
-* v0.0.0
-    - Initial movement of our data handling functions from mcode-log to mcode-data.
+- v0.6.2
+  - Added 'macid' as named key for pulled UUIDv1 Node Address.
+  - Added httpSeverity() to return the severity of a HTTP status code as a string compatible with mcode-log.
+  - Added less common HTTP status codes to the list of known codes in HTTP_CODES.
+- v0.6.1
+  - Added 'property(options)' to create a property with get, set methods, validator, and on change events.
+- v0.6.0
+  - Added more standardized JSDoc module headers for inclusion in end-product documentation.
+- v0.5.10
+  - Added 'default(anyItem, defaultItem)' function. It returns the defaultItem if anyItem is 'blank',
+    meaning null, undefined, or an 'empty' copy of the type.
+- v0.5.9
+  - Minor optimizations.
+- v0.5.8
+  - Updated 'httpStatus()' to use a STATIC copy of HTTP codes list for speed.
+  - Updated 'uuidDecode()' to use all STATIC text lists for speed.
+- v0.5.7
+  - Corrected cross-spawn v7.0.0 - 7.0.4; Severity: high; Regular Expression Denial of Service.
+- v0.5.6
+  - Updated 'uuidDecode()' to return the NIL UUID for a missing UUID parameter.
+- v0.5.5
+  - Minor reformatting of the 'httpStatus()' message to [BRACKET] the subsystem producing the message.
+- v0.5.4
+  - Corrected 'uuidDecode()' removed cnsole.log debug statement.
+- v0.5.3
+  - Corrected 'uuidDecode()' handling of timestamps in UUIDv6 and UUIDv7.
+- v0.5.2
+  - Added 'uuidDecode()' to display an immediate decoding of a UUID thru a JSON Object.
+- v0.5.1
+  - Added 'httpStatus()' for use in mcode.resx() - see mcode-log package.
+- v0.5.0
+  - All 'mcode-\*' packages updated with 'ready()' only implemented in 'mcode-log'.
+- v0.4.3
+  - Corrected 'isJson()' to required the _1st_ character be a '{', not any character.
+- v0.4.2
+  - Added 'fromSnakeCase()' and 'toSnakeCase()'.
+- v0.4.1
+  - Removed accidental dependency upon mcode-log.
+- v0.4.0
+  - Synchronized mcode-data, mcode-log, mcode-list, mcode-package.
+- v0.3.9
+  - Reorganization, all 'is' functions first.
+- v0.3.8
+  - Initial version, moved all data handling functions into new mcode-data package from mcode-log.
+- v0.0.0
+  - Initial movement of our data handling functions from mcode-log to mcode-data.
 
 ## Future Development
 
-* v0.1.\*
-    - Any additional core code we will develop for general list processing work.
-    - Complex function execution with passed arguments or passed functions.
+- v0.1.\*
+  - Any additional core code we will develop for general list processing work.
+  - Complex function execution with passed arguments or passed functions.
 
 ## License
 
