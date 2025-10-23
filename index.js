@@ -64,10 +64,14 @@
  *                                        it was returning true for any string that contained a '{' character,
  *                                        this was signaling 'true' for HTMX templates that contained '{{variable}}'.
  *      05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.
- *      19-Feb-2025   TJM-MCODE  {0006}   0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
- *                                               - updated all UUID string lists to STATIC as well.
- *      17-Apr-2025   TJM-MCODE  {0007}   0.5.09 - added 'isHtml()' function to check if a string is HTML,
- *                                                 updated 'isJson()' to use same check.
+ *
+ *      19-Feb-2025   TJM-MCODE  {0006}   v0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.
+ *                                                - updated all UUID string lists to STATIC as well.
+ *      17-Apr-2025   TJM-MCODE  {0007}   v0.5.09 - added 'isHtml()' function to check if a string is HTML,
+ *                                                  updated 'isJson()' to use same check.
+ *      23-Oct-2025   TJM-MCODE  {0008}   v0.6.03 - added 'classExport()' to return the created class constructor to support SSR
+ *                                                  and ESM module loading, especially in HTMX applications.
+ *                                                  Also added: sleep(), ifNumber(), encodeJson(), generateRandomId().
  *
  *
  *
@@ -420,6 +424,19 @@ const mcode = {
     },
 
     /**
+     * @function ifNumber
+     * @memberof mcode
+     * @description Checks if a value is a valid number; if not, returns a default value.
+     * @param {number} value The value to check.
+     * @param {number} defaultValue The default value to return if the check fails.
+     * @returns {number} The original value if valid, otherwise the default value.
+     */
+    ifNumber: function (value, defaultValue = 0)
+    {
+        return Number.isFinite(value) ? value : defaultValue;
+    },
+
+    /**
      * @func isNaN
      * @memberof mcode
      * @desc Checks whether or not an object is a double-precision 'Not-a-Number (Nan)'.
@@ -574,23 +591,23 @@ const mcode = {
      * @param {any} defaultItem The item to be returned if 'anyItem' is null, undefined, or empty.
      * @returns {any} The original item or the default if empty/null/undefined.
      * @example
-     *           err = mcode.default(err, 'Undefined error occurred');  // default to recognizable message
-     *           data = mcode.default(data, []); // Default to empty array
-     *           config = mcode.default(config, {}); // Default to empty object
-     *           count = mcode.default(count, 1); // Default to 1 if count is 0
+     *     err = mcode.default(err, 'Undefined error occurred');  // default to recognizable message
+     *     data = mcode.default(data, []); // Default to empty array
+     *     config = mcode.default(config, {}); // Default to empty object
+     *     count = mcode.default(count, 1); // Default to 1 if count is 0
      *
-     *           log(mcode.default(undefined, 'Default'));   // 'Default'
-     *           log(mcode.default(null, 'Default'));        // 'Default'
-     *           log(mcode.default('', 'Default'));          // 'Default'
-     *           log(mcode.default(0, 1));                   // 1 (0 is 'empty', returns default)
-     *           log(mcode.default(42, 1));                  // 42 (non-zero number, returns original)
-     *           log(mcode.default([], []));                 // []
-     *           log(mcode.default(['item'], ['default']));  // ['item']
-     *           log(mcode.default({}, {}));                 // {}
-     *           log(mcode.default({ key: 'value' }, { def: 'default' }));
-     *                                                              // { key: 'value' }
-     *           log(mcode.default(true, false));            // true
-     *           log(mcode.default('Hello', 'Default'));     // 'Hello'
+     *     log(mcode.default(undefined, 'Default'));   // 'Default'
+     *     log(mcode.default(null, 'Default'));        // 'Default'
+     *     log(mcode.default('', 'Default'));          // 'Default'
+     *     log(mcode.default(0, 1));                   // 1 (0 is 'empty', returns default)
+     *     log(mcode.default(42, 1));                  // 42 (non-zero number, returns original)
+     *     log(mcode.default([], []));                 // []
+     *     log(mcode.default(['item'], ['default']));  // ['item']
+     *     log(mcode.default({}, {}));                 // {}
+     *     log(mcode.default({ key: 'value' }, { def: 'default' }));
+     *                                                        // { key: 'value' }
+     *     log(mcode.default(true, false));            // true
+     *     log(mcode.default('Hello', 'Default'));     // 'Hello'
      */
     default(anyItem, defaultItem)
     {
@@ -1788,6 +1805,101 @@ const mcode = {
             .join(' ');               // join the words with spaces
     },
 
+    /**
+     * @function sleep
+     * @memberof mcode
+     * @desc Pauses execution for a specified duration.
+     * @param {number} ms The duration to sleep in milliseconds.
+     * @returns {Promise} A promise that resolves after the specified duration.
+     */
+    sleep: function (ms)
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+    /**
+     * @function generateRandomId
+     * @memberof mcode
+     * @desc Generates a random identifier in hexadecimal format, useful for creating unique IDs in the UI.
+     * The number generated is a random 6-digit hexadecimal string (e.g., '3F5A9C') which can be used as a suffix or part of an identifier.
+     * This number will be in the range of 000000 to FFFFFF (0 to 16,777,215 in decimal).
+     * @param {string} prefix A prefix to prepend to the time for a complete identifier.
+     * @returns {string} A unique random identifier, optionally prefixed for better scope control and identifcation.
+     */
+    generateRandomId: function (prefix)
+    {
+        // Generate a random 6-digit hexadecimal string
+        const id = Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, '0').toUpperCase();
+        return prefix ? `${prefix}-${id}` : id;
+    },
+
+    /**
+     * @function encodeJson
+     * @memberof mcode
+     * @description Encodes a value as a JSON string with special character replacements.
+     * @param {any} value The value to encode.
+     * @returns {string} The encoded JSON string.
+     */
+    encodeJson: function (value)
+    {
+        // Use JSON.stringify, then escape critical HTML-breaking and XSS (Cross Site Scripting) characters
+        return JSON.stringify(value)
+            .replace(/</g, '\\u003C')
+            .replace(/>/g, '\\u003E')
+            .replace(/&/g, '\\u0026')
+            .replace(/'/g, '\\u0027')
+            .replace(/"/g, '\\u0022');
+    },
+
+    /**
+     * @function classExport
+     * @memberof mcode
+     * @description >
+     * Safely registers a class in the global namespace or a specified namespace if it is not already defined.
+     * If Namespace.ClassName already exists and has bootstrapPending(), it is called, and the existing value is returned.
+     * See GitHub Repo 'MicroCODEIncorporated/TemplateJS' for a Class Template designed for this invocation.
+     * When this is used as a module wrapper, it becomes an Immediately Invoked Function Expression (IIFE) invoked on 'this' which
+     * represents the global object (window in a browser, global in Node.js).
+     * That IIFE returns the 'Class' object to be assigned to the global object.
+     * The Universal Module Definition (UMD) pattern supports Asynchronous Module Definition (AMD),
+     * CommonJS / Node.js, and Browser 'global' usage. {0008}
+     * @param {string|null} namespaceName - [Optional] global namespace (e.g., "MyApp"), if you want
+     * your Class available directly on the Global/Root namespace pass an empty string "".
+     * @param {string} className - Name of the class to export.
+     * @param {Function} factory - A function (root: any) that returns the class constructor.
+     * @returns {Function|any} The class constructor or the existing class if it already exists.
+     * @example
+     *
+     *    mcode.classExport('Namespace', 'ClassName', function (root)
+     *    {
+     *        class ClassName...  // the entire class is declared within 'function (root) { * }'.
+     *    });
+     *
+     */
+    classExport: function (namespaceName, className, factory)
+    {
+        if (typeof className !== 'string' || !className.trim()) throw new Error('mcode.classExport() requires a Class Name.');
+        if (typeof factory !== 'function') throw new Error('mcode.classExport() requires a function to define the Class.');
+
+        const root = (typeof globalThis !== 'undefined')
+            ? globalThis
+            : (typeof self !== 'undefined' ? self : this);
+
+        const namespace = namespaceName
+            ? (root[namespaceName] = root[namespaceName] || {})
+            : root;
+
+        if (!namespace[className])
+        {
+            namespace[className] = factory(root);
+        }
+        else if (typeof namespace[className].bootstrapPending === 'function')
+        {
+            namespace[className].bootstrapPending();
+        }
+
+        return namespace[className];
+    }
 };
 
 // #endregion
@@ -1795,10 +1907,10 @@ const mcode = {
 // #region  M E T H O D - E X P O R T S
 
 // Immediately Invoked Function Expression (IIFE) invoked on 'this' which
-// represents the global object(window in a browser, global in Node.js).
+// represents the global object (window in a browser, global in Node.js).
 // This IIFE returns the 'mcode' object to be assigned to the global object.
 // The Universal Module Definition (UMD) pattern supports Asynchronous Module Definition (AMD),
-// CommonJS / Node.js, and Browser 'global' usage.
+// CommonJS / Node.js, and Browser 'global' usage. {0008}
 (
     /**
      * @function (IIFE)

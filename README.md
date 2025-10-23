@@ -67,33 +67,39 @@ npm test
 
 These are the functions we want at the ready in any module for development and debug.
 
-| Function          | Description                                               | Usage                                                    |
-| ----------------- | --------------------------------------------------------- | -------------------------------------------------------- |
-| Properties        |                                                           |                                                          |
-| **property**      | Creates a property .set, .get, .validate, and .onchange.  | mcode.property(options)                                  |
-| Type Checking     |                                                           |                                                          |
-| **isString**      | Checks the type of an Object for String.                  | mcode.isString('stringToTest')                           |
-| **isObject**      | Checks the type of an Object for Object.                  | mcode.isObject(objectName)                               |
-| **isArray**       | Checks the type of an Object for Array.                   | mcode.isArray(arrayName)                                 |
-| **isFunction**    | Checks the type of an Object for Function.                | mcode.isFunction(objectName)                             |
-| **isNumber**      | Checks the type of an Object for Number.                  | mcode.isNumber(102022 or numberName)                     |
-| **isNaN**         | Checks the type of an Object for NaN.                     | mcode.isNaN(numberName)                                  |
-| **isJson**        | Checks the type of an Object for JSON.                    | mcode.isJson('{'JSON text'}' or objectName)              |
-| **isHtml**        | Checks the type of an Object for HTML.                    | mcode.isHtml('<'HTML text'>' or objectName)              |
-| **isDate**        | Checks the type of an Object for DATE.                    | mcode.isDate(timestamp)                                  |
-| **isTimeStamp**   | Checks the type of an Object for TIME STAMP.              | mcode.isTimeStamp(timestamp)                             |
-| **default**       | Returns a default value if an 'item' is 'blank'.          | mcode.default(value, default)                            |
-| Type Conversions  |                                                           |                                                          |
-| **octify**        | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                            |
-| **hexify**        | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                            |
-| **extractId**     | Extracts the first alpha-numeric ID Field from a string.  | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K")   |
-| **fromSnakeCase** | Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string")                 |
-| **toSnakeCase**   | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String")                   |
-| HTTP Support      |                                                           |                                                          |
-| **httpStatus**    | Converts a http status code into a message.               | mcode.httpStatus(code)                                   |
-| **httpSeverity**  | Converts a http status code into a log severity.          | mcode.httpSeverity(code)                                 |
-| UUID Support      |                                                           |                                                          |
-| **uuidDecode**    | Decodes a UUID string into a JSON object.                 | mcode.uuidDecode('LLLLLLLL-MMMM-vHHH-VSSS-CNNNNNNNNNNN') |
+| Function             | Description                                               | Usage                                                    |
+| -------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| Properties           |                                                           |                                                          |
+| **property**         | Creates a property .set, .get, .validate, and .onchange.  | mcode.property(options)                                  |
+| **classExport**      | Exports a class to the global or specified namespace.     | mcode.classExport('Namespace', 'ClassName', factory)     |
+| Type Checking        |                                                           |                                                          |
+| **isString**         | Checks the type of an Object for String.                  | mcode.isString('stringToTest')                           |
+| **isObject**         | Checks the type of an Object for Object.                  | mcode.isObject(objectName)                               |
+| **isArray**          | Checks the type of an Object for Array.                   | mcode.isArray(arrayName)                                 |
+| **isFunction**       | Checks the type of an Object for Function.                | mcode.isFunction(objectName)                             |
+| **isNumber**         | Checks the type of an Object for Number.                  | mcode.isNumber(102022 or numberName)                     |
+| **ifNumber**         | Checks the type of an Object for Number, returns default. | mcode.ifNumber(102022 or numberName, defaultValue)       |
+| **isNaN**            | Checks the type of an Object for NaN.                     | mcode.isNaN(numberName)                                  |
+| **isJson**           | Checks the type of an Object for JSON.                    | mcode.isJson('{'JSON text'}' or objectName)              |
+| **isHtml**           | Checks the type of an Object for HTML.                    | mcode.isHtml('<'HTML text'>' or objectName)              |
+| **isDate**           | Checks the type of an Object for DATE.                    | mcode.isDate(timestamp)                                  |
+| **isTimeStamp**      | Checks the type of an Object for TIME STAMP.              | mcode.isTimeStamp(timestamp)                             |
+| **default**          | Returns a default value if an 'item' is 'blank'.          | mcode.default(value, default)                            |
+| Utilities            |                                                           |                                                          |
+| **sleep**            | Pauses execution for a specified duration in ms.          | await mcode.sleep(500);                                  |
+| **generateRandomId** | Generates a random alpha-numeric ID of specified length.  | mcode.generateRandomId('myobject')                       |
+| **encodeJson**       | Encodes a JSON object into a Base64 string.               | mcode.encodeJson(jsonObject)                             |
+| Type Conversions     |                                                           |                                                          |
+| **octify**           | Converts a string into octal bytes for log.               | mcode.octify(stringToExamine)                            |
+| **hexify**           | Converts a string into hexadecimal bytes for log.         | mcode.hexify(stringToExamine)                            |
+| **extractId**        | Extracts the first alpha-numeric ID Field from a string.  | mcode.extractId("EP\_**GPT13TZ1**\_20231115_0800.L5K")   |
+| **fromSnakeCase**    | Creates a 'Title Case String' from a 'snake-case-string'. | mcode.fromSnakeCase("snake-case-string")                 |
+| **toSnakeCase**      | Creates a 'snake-case-string' from a 'Title Case String'. | mcode.toSnakeCase("Title Case String")                   |
+| HTTP Support         |                                                           |                                                          |
+| **httpStatus**       | Converts a http status code into a message.               | mcode.httpStatus(code)                                   |
+| **httpSeverity**     | Converts a http status code into a log severity.          | mcode.httpSeverity(code)                                 |
+| UUID Support         |                                                           |                                                          |
+| **uuidDecode**       | Decodes a UUID string into a JSON object.                 | mcode.uuidDecode('LLLLLLLL-MMMM-vHHH-VSSS-CNNNNNNNNNNN') |
 
 ### Documentation
 
@@ -153,6 +159,10 @@ Contributor's names and contact info...
 
 ## Version History
 
+- v0.6.3
+  - Added 'classExport()' to return the created class constructor to support SSR and ESM module loading,
+    especially in HTMX applications.
+  - Added several new utilities: 'ifNumber()', 'encodeJson()', 'classExport()', 'generateRandomId()', 'sleep()'.
 - v0.6.2
   - Added 'macid' as named key for pulled UUIDv1 Node Address.
   - Added httpSeverity() to return the severity of a HTTP status code as a string compatible with mcode-log.
