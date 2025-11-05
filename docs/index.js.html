@@ -1,5 +1,33 @@
-// #region  F I L E
-// <copyright file="mcode-data/index.js" company="MicroCODE Incorporated">Copyright © 2022-2024 MicroCODE, Inc. Troy, MI</copyright><author>Timothy J. McGuire</author>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: index.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: index.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #region  F I L E
+// &lt;copyright file="mcode-data/index.js" company="MicroCODE Incorporated">Copyright © 2022-2024 MicroCODE, Inc. Troy, MI&lt;/copyright>&lt;author>Timothy J. McGuire&lt;/author>
 // #region  M O D U L E
 // #region  D O C U M E N T A T I O N
 /**
@@ -308,7 +336,7 @@ const mcode = {
             },
             set: function (value)
             {
-                if (_immutable && (_value !== undefined))
+                if (_immutable &amp;&amp; (_value !== undefined))
                 {
                     throw new Error('｢mcode.property｣ This property is immutable.');
                 }
@@ -358,14 +386,14 @@ const mcode = {
      * @api private
      * @desc Safely resolve a nested property using an array of keys.
      * @param {object} source - Root object from which to read.
-     * @param {Array<string>} path - Ordered list of keys to traverse.
+     * @param {Array&lt;string>} path - Ordered list of keys to traverse.
      * @returns {any} Resolved value or undefined when not found.
      */
     getProperty: function (source, path)
     {
         return path.reduce((keyPath, key) =>
         {
-            if (keyPath && Object.prototype.hasOwnProperty.call(keyPath, key))
+            if (keyPath &amp;&amp; Object.prototype.hasOwnProperty.call(keyPath, key))
             {
                 return keyPath[key];
             }
@@ -379,7 +407,7 @@ const mcode = {
      * @desc Assign a nested property on the target object, creating scopes as needed.
      * @api private
      * @param {object} target - Object receiving the assignment.
-     * @param {Array<string>} path - Ordered list of keys to reach the leaf property.
+     * @param {Array&lt;string>} path - Ordered list of keys to reach the leaf property.
      * @param {any} value - Value to assign at the terminal path segment.
      * @returns {void}
      */
@@ -387,7 +415,7 @@ const mcode = {
     {
         let current = target;
 
-        for (let index = 0; index < path.length - 1; index += 1)
+        for (let index = 0; index &lt; path.length - 1; index += 1)
         {
             const key = path[index];
 
@@ -409,7 +437,7 @@ const mcode = {
      * @api public
      * @param {Class} instance - Class instance being updated, must have a 'context' object and 'syncDomContext()' method.
      * @param {string} property - Property name exposed on the instance.
-     * @param {Array<string>} path - Path segments within the context object.
+     * @param {Array&lt;string>} path - Path segments within the context object.
      * @param {object} [options] - Optional configuration flags.
      * @param {boolean} [options.sync=true] - Whether to resync the DOM context when setting.
      * @returns {void}
@@ -474,7 +502,7 @@ const mcode = {
     {
         if (mcode.isString(jsObject)) return false;
 
-        return typeof jsObject === 'object' && jsObject !== null && !Array.isArray(jsObject) && typeof jsObject !== 'function';
+        return typeof jsObject === 'object' &amp;&amp; jsObject !== null &amp;&amp; !Array.isArray(jsObject) &amp;&amp; typeof jsObject !== 'function';
     },
 
     /**
@@ -517,7 +545,7 @@ const mcode = {
     {
         // NOTE: this compare will fail for NaN
         // eslint-disable-next-line no-self-compare
-        return (typeof numberToCheck === 'number') && (numberToCheck === numberToCheck);
+        return (typeof numberToCheck === 'number') &amp;&amp; (numberToCheck === numberToCheck);
     },
 
     /**
@@ -565,7 +593,7 @@ const mcode = {
             // if this string begins with '{' and ends with '}' its very likely legal JSON code
             const trimmed = object.trim();
 
-            return trimmed.startsWith('{') && trimmed.endsWith('}');
+            return trimmed.startsWith('{') &amp;&amp; trimmed.endsWith('}');
         }
         catch
         {
@@ -587,10 +615,10 @@ const mcode = {
         {
             if (typeof object !== 'string') return false;
 
-            // if this string begins with '<' and ends with '>' its very likely legal HTML code
+            // if this string begins with '&lt;' and ends with '>' its very likely legal HTML code
             const trimmed = object.trim();
 
-            return trimmed.startsWith('<') && trimmed.endsWith('>');
+            return trimmed.startsWith('&lt;') &amp;&amp; trimmed.endsWith('>');
         }
         catch
         {
@@ -607,7 +635,7 @@ const mcode = {
      */
     isDomAvailable: function ()
     {
-        return typeof document !== 'undefined' && typeof document.getElementById === 'function';
+        return typeof document !== 'undefined' &amp;&amp; typeof document.getElementById === 'function';
     },
 
     /**
@@ -727,25 +755,25 @@ const mcode = {
         }
 
         // handle empty strings
-        if (typeof anyItem === 'string' && anyItem === '')
+        if (typeof anyItem === 'string' &amp;&amp; anyItem === '')
         {
             return defaultItem;
         }
 
         // handle unassigned values (0 is treated as 'unassigned')
-        if (typeof anyItem === 'number' && anyItem === 0)
+        if (typeof anyItem === 'number' &amp;&amp; anyItem === 0)
         {
             return defaultItem;
         }
 
         // handle empty arrays
-        if (Array.isArray(anyItem) && anyItem.length === 0)
+        if (Array.isArray(anyItem) &amp;&amp; anyItem.length === 0)
         {
             return defaultItem;
         }
 
         // Handle empty objects (excluding null prototypes or non-object types)
-        if (typeof anyItem === 'object' && anyItem !== null && Object.keys(anyItem).length === 0)
+        if (typeof anyItem === 'object' &amp;&amp; anyItem !== null &amp;&amp; Object.keys(anyItem).length === 0)
         {
             return defaultItem;
         }
@@ -810,19 +838,19 @@ const mcode = {
         const isUpper = (objectName, i) =>
         {
             // if 'i' is outside 'objectName' return false
-            if (i < 0 || i >= objectName.length)
+            if (i &lt; 0 || i >= objectName.length)
             {
                 return false;
             }
-            return (objectName[i] >= 'A' && objectName[i] <= 'Z');
+            return (objectName[i] >= 'A' &amp;&amp; objectName[i] &lt;= 'Z');
         };
 
         // scan the string for the first alpha-numeric field
-        for (let i = 0; i < objectName.length; i++)
+        for (let i = 0; i &lt; objectName.length; i++)
         {
-            isNumber = (objectName[i] >= '0' && objectName[i] <= '9');
-            isLetter = (objectName[i] >= 'A' && objectName[i] <= 'Z');
-            isLowerL = (objectName[i] >= 'a' && objectName[i] <= 'z');
+            isNumber = (objectName[i] >= '0' &amp;&amp; objectName[i] &lt;= '9');
+            isLetter = (objectName[i] >= 'A' &amp;&amp; objectName[i] &lt;= 'Z');
+            isLowerL = (objectName[i] >= 'a' &amp;&amp; objectName[i] &lt;= 'z');
 
             if (isNumber || isLetter || isLowerL)
             {
@@ -836,7 +864,7 @@ const mcode = {
                 hasNumbers = hasNumbers || isNumber;
 
                 // Check for 'lower case numeric placeholder' like 'PxCy' or 'PnCn' for 'P1C2'
-                if (isUpper(objectName, i - 1) && isUpper(objectName, i + 1) && isLowerL)
+                if (isUpper(objectName, i - 1) &amp;&amp; isUpper(objectName, i + 1) &amp;&amp; isLowerL)
                 {
                     hasNumbers = true;  // treat the single lower case letter between upper case letters as a number placeholder
                 }
@@ -844,7 +872,7 @@ const mcode = {
             else
             {
                 // hit non Alpha-Numeric character
-                if (inAlphaNumeric && hasLetters && hasNumbers)
+                if (inAlphaNumeric &amp;&amp; hasLetters &amp;&amp; hasNumbers)
                 {
                     idField = objectName.substring(si, i);
                     break;  // we have the field we want, exit to return it
@@ -1064,7 +1092,7 @@ const mcode = {
                 {
                     case 1:
                         // Combine the time fields into a 60-bit value using BigInt
-                        timeValue = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
+                        timeValue = (timeHigh &lt;&lt; 48n) | (timeMid &lt;&lt; 32n) | timeLow;
                         // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
                         timeValueInMs = timeValue / 10000n;
                         // Add time since UUID epoch to the precomputed epoch offset
@@ -1074,7 +1102,7 @@ const mcode = {
                         break;
                     case 6:
                         // Combine the time fields into a 60-bit value using BigInt
-                        timeValue = (timeHigh << 28n) | (timeMid << 12n) | timeLow;
+                        timeValue = (timeHigh &lt;&lt; 28n) | (timeMid &lt;&lt; 12n) | timeLow;
                         // UUID uses 100-nanosecond intervals, so we convert the timeValue to milliseconds
                         timeValueInMs = timeValue / 10000n;
                         // Add time since UUID epoch to the precomputed epoch offset
@@ -1084,7 +1112,7 @@ const mcode = {
                         break;
                     case 7:
                         // Combine the 48-bit timestamp from the first two fields
-                        timeValue = (timeHigh << 16n) | timeLow;
+                        timeValue = (timeHigh &lt;&lt; 16n) | timeLow;
                         // Convert the Unix timestamp (milliseconds since Unix epoch)
                         timeDate = new Date(Number(timeValue));
                         break;
@@ -1793,15 +1821,15 @@ const mcode = {
         const part_a = `${part_a1}${part_a0}`;
         const version = parseInt(ver_part_b.substring(0, 1), 16);
         const part_b = ver_part_b.substring(1);
-        const variant = (parseInt(var_part_c1.substring(0, 1), 16) >> 2) & 0b11;
-        const part_c2 = (parseInt(var_part_c1.substring(0, 1), 16) & 0b11).toString(16) + var_part_c1.substring(1);
+        const variant = (parseInt(var_part_c1.substring(0, 1), 16) >> 2) &amp; 0b11;
+        const part_c2 = (parseInt(var_part_c1.substring(0, 1), 16) &amp; 0b11).toString(16) + var_part_c1.substring(1);
         const part_c1 = part_c1_c0.substring(0, 4);
         const part_c0 = part_c1_c0.substring(4);
         const part_c = `${part_c2}${part_c1}${part_c0}`;
 
         // How to interpret the UUID...
         const variantText = UUID_VARIANTS[variant];
-        let versionText = '<undetermined>';
+        let versionText = '&lt;undetermined>';
         let variantValue1Name = 'part_a1';
         let variantValue1 = part_a1;
         let variantValue2Name = 'part_a0';
@@ -1955,9 +1983,9 @@ const mcode = {
 
         // Use JSON.stringify, then escape critical HTML-breaking and XSS (Cross Site Scripting) characters
         return JSON.stringify(value)
-            .replace(/</g, '\\u003C')
+            .replace(/&lt;/g, '\\u003C')
             .replace(/>/g, '\\u003E')
-            .replace(/&/g, '\\u0026')
+            .replace(/&amp;/g, '\\u0026')
             .replace(/'/g, '\\u0027')
             .replace(/"/g, '\\u0022');
     },
@@ -1974,11 +2002,11 @@ const mcode = {
         if (value === undefined || value === null) return '';
 
         return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+            .replace(/&amp;/g, '&amp;amp;')
+            .replace(/"/g, '&amp;quot;')
+            .replace(/'/g, '&amp;#39;')
+            .replace(/&lt;/g, '&amp;lt;')
+            .replace(/>/g, '&amp;gt;');
     },
 
     /**
@@ -2053,12 +2081,12 @@ const mcode = {
      */
     function (root, factory)
     {
-        if (typeof define === 'function' && define.amd)
+        if (typeof define === 'function' &amp;&amp; define.amd)
         {
             // AMD. Register as an anonymous module.
             define([], factory);
         }
-        else if (typeof module === 'object' && module.exports)
+        else if (typeof module === 'object' &amp;&amp; module.exports)
         {
             // Node. Does not work with strict CommonJS, but
             // only CommonJS-like environments that support module.exports, like Node.
@@ -2080,4 +2108,26 @@ const mcode = {
 // #endregion
 
 // #endregion
-// #endregion
+// #endregion</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="mcode.module__mcode-data.js_.html">'mcode-data.js'</a></li></ul><h3>Namespaces</h3><ul><li><a href="mcode.module__mcode-data.js_-mcode.html">mcode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Nov 05 2025 14:17:56 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

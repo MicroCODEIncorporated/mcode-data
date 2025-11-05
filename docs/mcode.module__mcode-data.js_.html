@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Module: 'mcode-data.js'</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: 'mcode-data.js'</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">>     MicroCODE Common Data Utitlities     LICENSE:     --------     MIT License: MicroCODE.mcode-data     Copyright (c) 2022-2025 Timothy McGuire, MicroCODE, Inc.     Permission is hereby granted, free of charge, to any person obtaining a copy     of this software and associated documentation files (the "Software"), to deal     in the Software without restriction, including without limitation the rights     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     copies of the Software, and to permit persons to whom the Software is     furnished to do so, subject to the following conditions:     The above copyright notice and this permission notice shall be included in all     copies or substantial portions of the Software.     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE     SOFTWARE.     DESCRIPTION:     ------------     This module implements the MicroCODE's Common JavaScript functions for data handling.     REFERENCES:     -----------     1. MIT xPRO Course: Professional Certificate in Coding: Full Stack Development with MERN.     2. LADDERS® source code: MACRO-11, MACRO-32, C#, and JavaScript.     MODIFICATIONS:     --------------     Date:         By-Group:   Rev:    Description:     30-Jan-2024   TJM-MCODE  {0001}   New module for common reusable JavaScript data handling functions.     01-Feb-2024   TJM-MCODE  {0002}   Changed to the Universal Module Definition (UMD) pattern to support AMD,                                       CommonJS/Node.js, and browser global in our exported module.     01-Feb-2024   TJM-MCODE  {0003}   Swap() and Call() now throw an error if the 'keys' and 'values' lists are not the same length,                                       instead of logging the error and returning a default value.     22-Aug-2024   TJM-MCODE  {0004}   Corrected isJson() to rely on 1st character being '{' to determine JSON string                                       it was returning true for any string that contained a '{' character,                                       this was signaling 'true' for HTMX templates that contained '{{variable}}'.     05-Oct-2024   TJM-MCODE  {0005}   Added 'uuidDecode()' function to decode UUID strings into their component parts.     19-Feb-2025   TJM-MCODE  {0006}   v0.5.08 - updated 'httpStatus()' to use a STATIC copy of HTTP codes JSON for speed.                                               - updated all UUID string lists to STATIC as well.     17-Apr-2025   TJM-MCODE  {0007}   v0.5.09 - added 'isHtml()' function to check if a string is HTML,                                                 updated 'isJson()' to use same check.     23-Oct-2025   TJM-MCODE  {0008}   v0.6.03 - added 'classExport()' to return the created class constructor to support SSR                                                 and ESM module loading, especially in HTMX applications.                                                 Also added: sleep(), ifNumber(), encodeJson(), generateRandomId().NOTE: This module follows MicroCODE's JavaScript Style Guide and Template JS file, see:      o  https://github.com/MicroCODEIncorporated/JavaScriptSG      o  https://github.com/MicroCODEIncorporated/TemplatesJS</div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Timothy McGuire, MicroCODE, Inc.</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line5">line 5</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Namespaces</h3>
+
+        <dl>
+            <dt><a href="mcode.module__mcode-data.js_-mcode.html">mcode</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="mcode.module__mcode-data.js_.html">'mcode-data.js'</a></li></ul><h3>Namespaces</h3><ul><li><a href="mcode.module__mcode-data.js_-mcode.html">mcode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Nov 05 2025 14:17:56 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
