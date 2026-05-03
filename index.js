@@ -920,6 +920,11 @@ const mcode = {
      */
     uuidDecode: function (uuid, localTime = false)
     {
+        if (typeof uuid !== 'string' || !/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(uuid))
+        {
+            return { error: 'Invalid UUID format' };
+        }
+
         // L I S T S - by UUID Variant and their Versions
 
         // ƒ Table of UUID Variants
@@ -1884,6 +1889,25 @@ const mcode = {
     },
 
     /**
+     * @func toTitleCase
+     * @memberof mcode
+     * @desc Converts into compact Title Case Text.
+     * @param {string} str - Raw text.
+     * @returns {string} Display text in Title Case.
+     */
+    toTitleCase:function (str)
+    {
+        if (!str) return '';
+        return str
+            .split(':')
+            .map((part) => part
+                .trim()
+                .replace(/[_-]+/g, ' ')
+                .replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()))
+            .join(': ');
+    },
+
+    /**
      * @func toSnakeCase
      * @memberof mcode
      * @desc Returns a lowercase-snake-case-name by converting a string's spaces to hyphens and discarding non-alphanumeric characters.
@@ -1892,6 +1916,7 @@ const mcode = {
      */
     toSnakeCase: function (str)
     {
+        if (!str) return '';
         return str
             .toLowerCase()            // convert the entire string to lowercase
             .replace(/[^\w\s]/g, '')  // remove any non-alphanumeric characters except spaces
@@ -1908,6 +1933,7 @@ const mcode = {
      */
     fromSnakeCase: function (str)
     {
+        if (!str) return '';
         return str
             .split('-')               // split the string at hyphens
             .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize the first letter of each word

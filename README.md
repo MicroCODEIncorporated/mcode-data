@@ -166,6 +166,8 @@ Contributor's names and contact info...
 
 ## Version History
 
+- v0.6.5
+  - Added 'toTitleCase()' to convert strings into compact Title Case text.
 - v0.6.4
   - Added 'encodeAttr()' to encode a string for safe inclusion in HTML attributes.
   - Added 'isDomAvailable()' to check if the DOM APIs are available in the current environment.
